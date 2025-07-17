@@ -13,5 +13,5 @@ class User(Base):
     pfp_url = Column(String)
     last_online = Column(DateTime, default=datetime.utcnow)
 
-messages_sent = relationship("Message", back_populates="sender")
-chat_memberships = relationship("ChatMember", back_populates="user")
+    messages_sent = relationship("Message", back_populates="sender")
+    chat_memberships = relationship("ChatMember", back_populates="user")

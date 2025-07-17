@@ -12,5 +12,5 @@ class Message(Base):
     content = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
-sender = relationship("User", back_populates="messages_sent")
-chat = relationship("Chat", back_populates="messages")
+    sender = relationship("User", back_populates="messages_sent")
+    chat = relationship("Chat", back_populates="messages")

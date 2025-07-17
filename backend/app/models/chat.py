@@ -9,5 +9,5 @@ class Chat(Base):
     is_group = Column(Boolean, nullable=False, default=False)
     group_name = Column(String)
 
-messages = relationship("Message", back_populates="chat")
-members = relationship("ChatMember", back_populates="chat")
+    messages = relationship("Message", back_populates="chat")
+    members = relationship("ChatMember", back_populates="chat")
