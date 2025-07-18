@@ -5,14 +5,14 @@ class UserBase(BaseModel):
     username: str
     pfp_url: str | None = None
 
-class UserPublic(UserBase):
+class UserReadPublic(UserBase):
     id: int
     last_online: datetime
 
     class Config:
         orm_mode = True
 
-class UserPrivate(UserPublic):
+class UserReadPrivate(UserReadPublic):
     email: EmailStr
 
 class UserCreate(UserBase):
