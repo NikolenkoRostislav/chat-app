@@ -10,7 +10,7 @@ class UserReadPublic(UserBase):
     last_online: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserReadPrivate(UserReadPublic):
     email: EmailStr

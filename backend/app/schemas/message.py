@@ -11,7 +11,7 @@ class MessageOut(MessageBase):
     timestamp: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class MessageIn(MessageBase):
     pass

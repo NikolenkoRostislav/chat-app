@@ -8,7 +8,7 @@ class ChatOut(ChatBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ChatIn(ChatBase):
     pass
