@@ -4,8 +4,13 @@ from app.models import User
 from app.schemas import UserCreate
 from app.utils.security import get_password_hash
 
-
 class UserService:
+    @staticmethod
+    async def _get_user_by_field(db: AsyncSession, field_name: str, value) -> User | None:
+        field = getattr(User, field_name)
+        result = await db.execute(select(User).where(field == value))
+        return result.scalar_one_or_none()
+
     @staticmethod
     async def create_user(db: AsyncSession, user: UserCreate) -> User:
         hashed = get_password_hash(user.password)
@@ -22,12 +27,14 @@ class UserService:
 
     @staticmethod
     async def get_user_by_username(db: AsyncSession, username: str) -> User | None:
-        result = await db.execute(select(User).where(User.username == username))
-        return result.scalar_one_or_none()
+        return await UserService._get_user_by_field(db, 'username', username)
 
     @staticmethod
     async def get_user_by_email(db: AsyncSession, email: str) -> User | None:
-        result = await db.execute(select(User).where(User.email == email))
-        return result.scalar_one_or_none()
+        return await UserService._get_user_by_field(db, 'email', email)
+
+    @staticmethod
+    async def get_user_by_id(db: AsyncSession, id: str) -> User | None:
+        return await UserService._get_user_by_field(db, 'id', id)
 
     
