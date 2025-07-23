@@ -1,8 +1,10 @@
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models import User
 from app.schemas import UserCreate
-from app.utils.security import get_password_hash
+from app.utils.auth import create_access_token
+from app.utils.security import get_password_hash, verify_password
 
 async def _get_user_by_field(db: AsyncSession, field_name: str, value) -> User | None:
     field = getattr(User, field_name)
@@ -23,6 +25,13 @@ class UserService:
         await db.commit()
         await db.refresh(db_user)
         return db_user
+
+    @staticmethod
+    async def login_user(db: AsyncSession, username: str, password: str) -> str:
+        user = await UserService.get_user_by_username(db, username)
+        if not user or not verify_password(password, user.password_hash):
+            raise HTTPException(status_code=400, detail="Invalid credentials")
+        return create_access_token({"sub": str(user.id)})
 
     @staticmethod
     async def get_user_by_username(db: AsyncSession, username: str) -> User | None:

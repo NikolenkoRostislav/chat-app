@@ -23,3 +23,7 @@ class UserUpdate(BaseModel):
     username: str | None = None
     pfp_url: str | None = None
     password: str | None = None
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
