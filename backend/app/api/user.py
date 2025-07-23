@@ -28,3 +28,10 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 @router.get("/me", response_model=UserReadPrivate)
 async def read_self(user: User = Depends(get_current_user)):
     return user
+
+@router.get("/{username}", response_model=UserReadPublic)
+async def read_user(username: str, db: AsyncSession = Depends(get_db)):
+    user = await UserService.get_user_by_username(db, username)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
