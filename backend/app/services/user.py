@@ -11,6 +11,12 @@ async def _get_user_by_field(db: AsyncSession, field_name: str, value) -> User |
     result = await db.execute(select(User).where(field == value))
     return result.scalar_one_or_none()
 
+async def _update_user_field(db: AsyncSession, user: User, field_name: str, value) -> User | None:
+    setattr(user, field_name, value)
+    await db.commit()
+    await db.refresh(user)
+    return user
+
 class UserService:
     @staticmethod
     async def create_user(db: AsyncSession, user: UserCreate) -> User:
@@ -44,5 +50,22 @@ class UserService:
     @staticmethod
     async def get_user_by_id(db: AsyncSession, id: str) -> User | None:
         return await _get_user_by_field(db, 'id', id)
+
+    @staticmethod
+    async def update_user_password(db: AsyncSession, user: User, new_password: str) -> User | None:
+        return await _update_user_field(db, user, "password", new_password)
+    
+    @staticmethod
+    async def update_user_username(db: AsyncSession, user: User, new_username: str) -> User | None:
+        return await _update_user_field(db, user, "username", new_username)
+
+    @staticmethod
+    async def update_user_email(db: AsyncSession, user: User, new_email: str) -> User | None:
+        return await _update_user_field(db, user, "email", new_email)
+
+    @staticmethod
+    async def update_user_pfp(db: AsyncSession, user: User, new_pfp: str) -> User | None:
+        return await _update_user_field(db, user, "pfp_url", new_pfp)
+
 
     

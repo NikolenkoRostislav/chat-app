@@ -19,10 +19,8 @@ class UserCreate(UserBase):
     email: EmailStr
     password: str
 
-class UserUpdate(BaseModel):
-    username: str | None = None
-    pfp_url: str | None = None
-    password: str | None = None
+class UserUpdateEmail(BaseModel):
+    email: EmailStr
 
 class UserLogin(BaseModel):
     username: str
