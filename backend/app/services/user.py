@@ -11,7 +11,7 @@ async def _get_user_by_field(db: AsyncSession, field_name: str, value) -> User |
     result = await db.execute(select(User).where(field == value))
     return result.scalar_one_or_none()
 
-async def _update_user_field(db: AsyncSession, user: User, field_name: str, value) -> User | None:
+async def _update_field(db: AsyncSession, user: User, field_name: str, value) -> User | None:
     setattr(user, field_name, value)
     await db.commit()
     await db.refresh(user)
@@ -19,21 +19,21 @@ async def _update_user_field(db: AsyncSession, user: User, field_name: str, valu
 
 class UserService:
     @staticmethod
-    async def create_user(db: AsyncSession, user: UserCreate) -> User:
-        hashed = get_password_hash(user.password)
-        db_user = User(
-            email=user.email,
-            username=user.username,
+    async def create_user(db: AsyncSession, user_data: UserCreate) -> User:
+        hashed = get_password_hash(user_data.password)
+        user = User(
+            email=user_data.email,
+            username=user_data.username,
             password_hash=hashed,
-            pfp_url=user.pfp_url
+            pfp_url=user_data.pfp_url
         )
-        db.add(db_user)
+        db.add(user)
         await db.commit()
-        await db.refresh(db_user)
-        return db_user
+        await db.refresh(user)
+        return user
 
     @staticmethod
-    async def login_user(db: AsyncSession, username: str, password: str) -> str:
+    async def login(db: AsyncSession, username: str, password: str) -> str:
         user = await UserService.get_user_by_username(db, username)
         if not user or not verify_password(password, user.password_hash):
             raise HTTPException(status_code=400, detail="Invalid credentials")
@@ -52,20 +52,20 @@ class UserService:
         return await _get_user_by_field(db, 'id', id)
 
     @staticmethod
-    async def update_user_password(db: AsyncSession, user: User, new_password: str) -> User | None:
-        return await _update_user_field(db, user, "password", new_password)
+    async def update_password(db: AsyncSession, user: User, new_password: str) -> User | None:
+        return await _update_field(db, user, "password", new_password)
     
     @staticmethod
-    async def update_user_username(db: AsyncSession, user: User, new_username: str) -> User | None:
-        return await _update_user_field(db, user, "username", new_username)
+    async def update_username(db: AsyncSession, user: User, new_username: str) -> User | None:
+        return await _update_field(db, user, "username", new_username)
 
     @staticmethod
-    async def update_user_email(db: AsyncSession, user: User, new_email: str) -> User | None:
-        return await _update_user_field(db, user, "email", new_email)
+    async def update_email(db: AsyncSession, user: User, new_email: str) -> User | None:
+        return await _update_field(db, user, "email", new_email)
 
     @staticmethod
-    async def update_user_pfp(db: AsyncSession, user: User, new_pfp: str) -> User | None:
-        return await _update_user_field(db, user, "pfp_url", new_pfp)
+    async def update_pfp(db: AsyncSession, user: User, new_pfp: str) -> User | None:
+        return await _update_field(db, user, "pfp_url", new_pfp)
 
 
     

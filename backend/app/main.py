@@ -3,10 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.db.database import engine, Base
 from app.models import *
-from app.api.user import router as user_router
+from app.api import *
 
 app = FastAPI()
 app.include_router(user_router)
+app.include_router(chat_router)
+app.include_router(chat_member_router)
 
 origins = settings.ALLOWED_ORIGINS
 

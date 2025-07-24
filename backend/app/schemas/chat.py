@@ -1,17 +1,15 @@
 from pydantic import BaseModel
 
 class ChatBase(BaseModel):
-    is_group: bool
-    group_name: str | None = None
+    name: str | None = None
+    icon_url: str | None = None
 
-class ChatOut(ChatBase):
+class ChatRead(ChatBase):
+    creator_id: int
     id: int
 
     class Config:
         from_attributes = True
 
-class ChatIn(ChatBase):
+class ChatCreate(ChatBase):
     pass
-
-class ChatUpdate(BaseModel):
-    group_name: str
