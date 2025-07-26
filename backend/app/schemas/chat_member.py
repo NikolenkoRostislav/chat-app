@@ -4,11 +4,11 @@ class ChatMemberBase(BaseModel):
     chat_id: int
     user_id: int
 
-class ChatMemberOut(ChatMemberBase):
+class ChatMemberRead(ChatMemberBase):
     id: int
 
     class Config:
         from_attributes = True
 
-class ChatMemberIn(ChatMemberBase):
+class ChatMemberCreate(ChatMemberBase):
     pass

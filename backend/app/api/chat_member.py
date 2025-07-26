@@ -1,3 +1,35 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.session import get_db
+from app.schemas import ChatMemberCreate, ChatMemberRead
+from app.services import ChatMemberService, ChatService, UserService
+from app.models import Chat, User, ChatMember
 
 router = APIRouter(prefix="/chat_member", tags=["chat_member"])
+
+@router.post("/join", response_model=ChatMemberRead)
+async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession = Depends(get_db)):
+    chat = await ChatService.get_chat_by_id(db, chat_id)
+    user = await UserService.get_user_by_id(db, user_id)
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat not found")
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user_is_member = await ChatMemberService.get_chat_member_by_user_and_chat_id(user_id, chat_id, db)
+    if user_is_member:
+        raise HTTPException(status_code=400, detail="User already in chat")
+    return await ChatMemberService.add_user_to_chat(user_id, chat_id, db)
+
+@router.get("/user-memberships/{user_id}", response_model=list[ChatMemberRead])
+async def get_chat_memberships(user_id: int, db: AsyncSession = Depends(get_db)):
+    user = await UserService.get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return await ChatMemberService.get_chat_members_by_user_id(user_id, db)
+
+@router.get("/chat-members/{chat_id}", response_model=list[ChatMemberRead])
+async def get_chat_members(chat_id: int, db: AsyncSession = Depends(get_db)):
+    chat = await ChatService.get_chat_by_id(db, chat_id)
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat not found")
+    return await ChatMemberService.get_chat_members_by_chat_id(chat_id, db)
