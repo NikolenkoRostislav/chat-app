@@ -5,18 +5,14 @@ from app.schemas import ChatMemberCreate, ChatMemberRead
 from app.services import ChatMemberService, ChatService, UserService
 from app.models import Chat, User, ChatMember
 from app.utils.auth import get_current_user
-from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyExistsError
+from app.utils.exceptions import handle_exceptions
 
 router = APIRouter(prefix="/chat_member", tags=["chat_member"])
 
 @router.post("/join", response_model=ChatMemberRead)
+@handle_exceptions
 async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession = Depends(get_db)):
-    try:
-        return await ChatMemberService.add_user_to_chat(user_id, chat_id, db)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except AlreadyExistsError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return await ChatMemberService.add_user_to_chat(user_id, chat_id, db)
 
 @router.get("/user-memberships/{user_id}", response_model=list[ChatMemberRead])
 async def get_chat_memberships(user_id: int, db: AsyncSession = Depends(get_db)):
