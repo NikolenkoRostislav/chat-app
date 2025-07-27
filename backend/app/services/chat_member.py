@@ -27,33 +27,43 @@ class ChatMemberService:
         if strict and chat_member is None:
             raise NotFoundError("Chat member not found")
         return chat_member
+    
+    @staticmethod
+    async def check_user_membership(user_id: int, chat_id: int, db: AsyncSession) -> bool:
+        chat_member = await ChatMemberService.get_chat_member_by_user_and_chat_id(user_id, chat_id, db)
+        return chat_member is not None
 
     @staticmethod
-    async def get_chat_members_by_chat_id(chat_id: int, db: AsyncSession) -> list[ChatMember]:
+    async def get_chat_members_by_chat_id(chat_id: int, db: AsyncSession, current_user: User) -> list[ChatMember]:
         chat = await ChatService.get_chat_by_id(db, chat_id)
         if chat is None:
             raise NotFoundError("Chat not found")
+        if not await ChatMemberService.check_user_membership(current_user.id, chat_id, db) and chat.creator_id != current_user.id:
+            raise PermissionDeniedError("You lack permission to view this chat's members")
         result = await db.execute(select(ChatMember).where(ChatMember.chat_id == chat_id))
         return result.scalars().all()
 
     @staticmethod
-    async def get_chat_members_by_user_id(user_id: int, db: AsyncSession) -> list[ChatMember]:
+    async def get_chat_members_by_user_id(user_id: int, db: AsyncSession, current_user: User) -> list[ChatMember]:
         user = await UserService.get_user_by_id(db, user_id)
         if user is None:
             raise NotFoundError("User not found")
+        if current_user.id != user_id:
+            raise PermissionDeniedError("You lack permission to view this user's chats")
         result = await db.execute(select(ChatMember).where(ChatMember.user_id == user_id))
         return result.scalars().all()
 
     @staticmethod
-    async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession) -> ChatMember:
+    async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession, current_user: User) -> ChatMember:
         chat = await ChatService.get_chat_by_id(db, chat_id)
         user = await UserService.get_user_by_id(db, user_id)
         if chat is None:
             raise NotFoundError("Chat not found")
         if user is None:
             raise NotFoundError("User not found")
-        user_is_member = await ChatMemberService.get_chat_member_by_user_and_chat_id(user_id, chat_id, db)
-        if user_is_member:
+        if not await ChatMemberService.check_user_membership(current_user.id, chat_id, db) and chat.creator_id != current_user.id:
+            raise PermissionDeniedError("You lack permission to add users to this chat")
+        if await ChatMemberService.check_user_membership(user_id, chat_id, db):
             raise AlreadyExistsError("User already in chat")
         chat_member = ChatMember(
             user_id=user_id,
@@ -70,8 +80,7 @@ class ChatMemberService:
         chat = await ChatService.get_chat_by_id(db, chat_id)
         if current_user.id != chat.creator_id:
             raise PermissionDeniedError("You lack permission to remove this user from the chat")
-        chat_member = await ChatMemberService.get_chat_member_by_user_and_chat_id(user_id, chat_id, db)
-        if chat_member is None:
+        if not await ChatMemberService.check_user_membership(user_id, chat_id, db):
             raise InvalidEntryError("User is not a member of this chat")
         await db.delete(chat_member)
         await db.commit()

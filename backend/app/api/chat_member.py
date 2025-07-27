@@ -11,18 +11,18 @@ router = APIRouter(prefix="/chat_member", tags=["chat_member"])
 
 @router.post("/join", response_model=ChatMemberRead)
 @handle_exceptions
-async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession = Depends(get_db)):
+async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     return await ChatMemberService.add_user_to_chat(user_id, chat_id, db)
 
 @router.get("/user-memberships/{user_id}", response_model=list[ChatMemberRead])
 @handle_exceptions
-async def get_chat_memberships(user_id: int, db: AsyncSession = Depends(get_db)):
-    return await ChatMemberService.get_chat_members_by_user_id(user_id, db)
+async def get_chat_memberships(user_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await ChatMemberService.get_chat_members_by_user_id(user_id, db, current_user)
 
 @router.get("/chat-members/{chat_id}", response_model=list[ChatMemberRead])
 @handle_exceptions
-async def get_chat_members(chat_id: int, db: AsyncSession = Depends(get_db)):
-    return await ChatMemberService.get_chat_members_by_chat_id(chat_id, db)
+async def get_chat_members(chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await ChatMemberService.get_chat_members_by_chat_id(chat_id, db, current_user)
 
 @router.delete("/remove-member")
 @handle_exceptions
