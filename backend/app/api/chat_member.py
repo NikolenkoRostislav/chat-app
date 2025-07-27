@@ -15,24 +15,16 @@ async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession = Depend
     return await ChatMemberService.add_user_to_chat(user_id, chat_id, db)
 
 @router.get("/user-memberships/{user_id}", response_model=list[ChatMemberRead])
+@handle_exceptions
 async def get_chat_memberships(user_id: int, db: AsyncSession = Depends(get_db)):
-    user = await UserService.get_user_by_id(db, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
     return await ChatMemberService.get_chat_members_by_user_id(user_id, db)
 
 @router.get("/chat-members/{chat_id}", response_model=list[ChatMemberRead])
+@handle_exceptions
 async def get_chat_members(chat_id: int, db: AsyncSession = Depends(get_db)):
-    try:
-        return await ChatMemberService.get_chat_members_by_chat_id(chat_id, db)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return await ChatMemberService.get_chat_members_by_chat_id(chat_id, db)
 
 @router.delete("/remove-member")
+@handle_exceptions
 async def remove_member(user_id: int, chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
-    try: #I'll refactor the other routes to catch the exceptions from the services soon
-        return await ChatMemberService.remove_member(user_id, chat_id, db, current_user)
-    except PermissionDeniedError as e: 
-        raise HTTPException(status_code=403, detail=str(e))
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return await ChatMemberService.remove_member(user_id, chat_id, db, current_user)

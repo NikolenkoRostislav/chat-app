@@ -1,15 +1,18 @@
-from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models import User
 from app.schemas import UserCreate
 from app.utils.auth import create_access_token
+from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyExistsError, InvalidEntryError
 from app.utils.security import get_password_hash, verify_password
 
-async def _get_user_by_field(db: AsyncSession, field_name: str, value) -> User | None:
+async def _get_user_by_field(db: AsyncSession, field_name: str, value, strict: bool) -> User | None:
     field = getattr(User, field_name)
     result = await db.execute(select(User).where(field == value))
-    return result.scalar_one_or_none()
+    chat = result.scalar_one_or_none()
+    if strict and chat is None:
+        raise NotFoundError(f"User with {field_name} '{value}' not found")
+    return chat
 
 async def _update_field(db: AsyncSession, user: User, field_name: str, value) -> User | None:
     setattr(user, field_name, value)
@@ -20,6 +23,12 @@ async def _update_field(db: AsyncSession, user: User, field_name: str, value) ->
 class UserService:
     @staticmethod
     async def create_user(db: AsyncSession, user_data: UserCreate) -> User:
+        existing_email = await UserService.get_user_by_email(db, user_data.email)
+        existing_username = await UserService.get_user_by_username(db, user_data.username)
+        if existing_email:
+            raise AlreadyExistsError("Email already in use")
+        elif existing_username:
+            raise AlreadyExistsError("Username already in use")
         hashed = get_password_hash(user_data.password)
         user = User(
             email=user_data.email,
@@ -36,20 +45,20 @@ class UserService:
     async def login(db: AsyncSession, username: str, password: str) -> str:
         user = await UserService.get_user_by_username(db, username)
         if not user or not verify_password(password, user.password_hash):
-            raise HTTPException(status_code=400, detail="Invalid credentials")
+            raise InvalidEntryError("Invalid credentials")
         return create_access_token({"sub": str(user.id)})
 
     @staticmethod
-    async def get_user_by_username(db: AsyncSession, username: str) -> User | None:
-        return await _get_user_by_field(db, 'username', username)
+    async def get_user_by_username(db: AsyncSession, username: str, strict: bool = False) -> User | None:
+        return await _get_user_by_field(db, 'username', username, strict)
 
     @staticmethod
-    async def get_user_by_email(db: AsyncSession, email: str) -> User | None:
-        return await _get_user_by_field(db, 'email', email)
+    async def get_user_by_email(db: AsyncSession, email: str, strict: bool = False) -> User | None:
+        return await _get_user_by_field(db, 'email', email, strict)
 
     @staticmethod
-    async def get_user_by_id(db: AsyncSession, id: str) -> User | None:
-        return await _get_user_by_field(db, 'id', id)
+    async def get_user_by_id(db: AsyncSession, id: str, strict: bool = False) -> User | None:
+        return await _get_user_by_field(db, 'id', id, strict)
 
     @staticmethod
     async def update_password(db: AsyncSession, user: User, new_password: str) -> User | None:
@@ -57,10 +66,16 @@ class UserService:
     
     @staticmethod
     async def update_username(db: AsyncSession, user: User, new_username: str) -> User | None:
+        existing_username = await UserService.get_user_by_username(db, new_username)
+        if existing_username is not None:
+            raise AlreadyExistsError("Username already in use")
         return await _update_field(db, user, "username", new_username)
 
     @staticmethod
     async def update_email(db: AsyncSession, user: User, new_email: str) -> User | None:
+        existing_email = await UserService.get_user_by_email(db, new_email)
+        if existing_email is not None:
+            raise AlreadyExistsError("Email already in use")
         return await _update_field(db, user, "email", new_email)
 
     @staticmethod

@@ -3,16 +3,19 @@ from sqlalchemy.future import select
 from app.models import Chat, User, ChatMember
 from app.schemas import ChatMemberCreate
 from app.services import ChatService, UserService
-from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyExistsError
+from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyExistsError, InvalidEntryError
 
 class ChatMemberService:
     @staticmethod
-    async def get_chat_member_by_id(chat_member_id: int, db: AsyncSession) -> ChatMember | None:
+    async def get_chat_member_by_id(chat_member_id: int, db: AsyncSession, strict: bool = False) -> ChatMember | None:
         result = await db.execute(select(ChatMember).where(ChatMember.id == chat_member_id))
-        return result.scalar_one_or_none()
+        chat_member = result.scalar_one_or_none()
+        if strict and chat_member is None:
+            raise NotFoundError("Chat member not found")
+        return chat_member
 
     @staticmethod
-    async def get_chat_member_by_user_and_chat_id(user_id: int, chat_id: int, db: AsyncSession) -> ChatMember | None:
+    async def get_chat_member_by_user_and_chat_id(user_id: int, chat_id: int, db: AsyncSession, strict: bool = False) -> ChatMember | None:
         chat = await ChatService.get_chat_by_id(db, chat_id)
         user = await UserService.get_user_by_id(db, user_id)
         if chat is None:
@@ -20,15 +23,24 @@ class ChatMemberService:
         elif user is None:
             raise NotFoundError("User not found")
         result = await db.execute(select(ChatMember).where(ChatMember.user_id == user_id, ChatMember.chat_id == chat_id))
-        return result.scalar_one_or_none()
+        chat_member = result.scalar_one_or_none()
+        if strict and chat_member is None:
+            raise NotFoundError("Chat member not found")
+        return chat_member
 
     @staticmethod
-    async def get_chat_members_by_chat_id(chat_id: int, db: AsyncSession) -> list[ChatMember]:#I should probably remove this and write a method in ChatService
+    async def get_chat_members_by_chat_id(chat_id: int, db: AsyncSession) -> list[ChatMember]:
+        chat = await ChatService.get_chat_by_id(db, chat_id)
+        if chat is None:
+            raise NotFoundError("Chat not found")
         result = await db.execute(select(ChatMember).where(ChatMember.chat_id == chat_id))
         return result.scalars().all()
 
     @staticmethod
-    async def get_chat_members_by_user_id(user_id: int, db: AsyncSession) -> list[ChatMember]:#And replace this with a method in UserService
+    async def get_chat_members_by_user_id(user_id: int, db: AsyncSession) -> list[ChatMember]:
+        user = await UserService.get_user_by_id(db, user_id)
+        if user is None:
+            raise NotFoundError("User not found")
         result = await db.execute(select(ChatMember).where(ChatMember.user_id == user_id))
         return result.scalars().all()
 
@@ -36,9 +48,9 @@ class ChatMemberService:
     async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession) -> ChatMember:
         chat = await ChatService.get_chat_by_id(db, chat_id)
         user = await UserService.get_user_by_id(db, user_id)
-        if not chat:
+        if chat is None:
             raise NotFoundError("Chat not found")
-        if not user:
+        if user is None:
             raise NotFoundError("User not found")
         user_is_member = await ChatMemberService.get_chat_member_by_user_and_chat_id(user_id, chat_id, db)
         if user_is_member:
@@ -60,7 +72,7 @@ class ChatMemberService:
             raise PermissionDeniedError("You lack permission to remove this user from the chat")
         chat_member = await ChatMemberService.get_chat_member_by_user_and_chat_id(user_id, chat_id, db)
         if chat_member is None:
-            raise NotFoundError("User is not a member of this chat")
+            raise InvalidEntryError("User is not a member of this chat")
         await db.delete(chat_member)
         await db.commit()
         return {"detail": "User removed from chat"}
