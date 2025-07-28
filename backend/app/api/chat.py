@@ -17,4 +17,4 @@ async def create_chat(chat: ChatCreate, db: AsyncSession = Depends(get_db), curr
 @router.get("/{chat_id}", response_model=ChatRead)
 @handle_exceptions
 async def get_chat(chat_id: int, db: AsyncSession = Depends(get_db)):
-    return await ChatService.get_chat_by_id(db, chat_id, True) 
+    return await ChatService.get_chat_by_id(chat_id, db, True) 

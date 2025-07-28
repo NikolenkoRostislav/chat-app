@@ -12,7 +12,7 @@ router = APIRouter(prefix="/chat_member", tags=["chat_member"])
 @router.post("/join", response_model=ChatMemberRead)
 @handle_exceptions
 async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return await ChatMemberService.add_user_to_chat(user_id, chat_id, db)
+    return await ChatMemberService.add_user_to_chat(user_id, chat_id, db, current_user)
 
 @router.get("/user-memberships/{user_id}", response_model=list[ChatMemberRead])
 @handle_exceptions

@@ -6,7 +6,7 @@ from app.utils.auth import create_access_token
 from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyExistsError, InvalidEntryError
 from app.utils.security import get_password_hash, verify_password
 
-async def _get_user_by_field(db: AsyncSession, field_name: str, value, strict: bool) -> User | None:
+async def _get_user_by_field(field_name: str, value, db: AsyncSession, strict: bool) -> User | None:
     field = getattr(User, field_name)
     result = await db.execute(select(User).where(field == value))
     chat = result.scalar_one_or_none()
@@ -14,7 +14,7 @@ async def _get_user_by_field(db: AsyncSession, field_name: str, value, strict: b
         raise NotFoundError(f"User with {field_name} '{value}' not found")
     return chat
 
-async def _update_field(db: AsyncSession, user: User, field_name: str, value) -> User | None:
+async def _update_field(user: User, field_name: str, value, db: AsyncSession) -> User | None:
     setattr(user, field_name, value)
     await db.commit()
     await db.refresh(user)
@@ -22,9 +22,9 @@ async def _update_field(db: AsyncSession, user: User, field_name: str, value) ->
 
 class UserService:
     @staticmethod
-    async def create_user(db: AsyncSession, user_data: UserCreate) -> User:
-        existing_email = await UserService.get_user_by_email(db, user_data.email)
-        existing_username = await UserService.get_user_by_username(db, user_data.username)
+    async def create_user(user_data: UserCreate, db: AsyncSession) -> User:
+        existing_email = await UserService.get_user_by_email(user_data.email, db)
+        existing_username = await UserService.get_user_by_username(user_data.username, db)
         if existing_email:
             raise AlreadyExistsError("Email already in use")
         elif existing_username:
@@ -42,45 +42,45 @@ class UserService:
         return user
 
     @staticmethod
-    async def login(db: AsyncSession, username: str, password: str) -> str:
-        user = await UserService.get_user_by_username(db, username)
+    async def login(username: str, password: str, db: AsyncSession) -> str:
+        user = await UserService.get_user_by_username(username, db)
         if not user or not verify_password(password, user.password_hash):
             raise InvalidEntryError("Invalid credentials")
         return create_access_token({"sub": str(user.id)})
 
     @staticmethod
-    async def get_user_by_username(db: AsyncSession, username: str, strict: bool = False) -> User | None:
-        return await _get_user_by_field(db, 'username', username, strict)
+    async def get_user_by_username(username: str, db: AsyncSession, strict: bool = False) -> User | None:
+        return await _get_user_by_field('username', username, db, strict)
 
     @staticmethod
-    async def get_user_by_email(db: AsyncSession, email: str, strict: bool = False) -> User | None:
-        return await _get_user_by_field(db, 'email', email, strict)
+    async def get_user_by_email(email: str, db: AsyncSession, strict: bool = False) -> User | None:
+        return await _get_user_by_field('email', email, db, strict)
 
     @staticmethod
-    async def get_user_by_id(db: AsyncSession, id: str, strict: bool = False) -> User | None:
-        return await _get_user_by_field(db, 'id', id, strict)
+    async def get_user_by_id(id: str, db: AsyncSession, strict: bool = False) -> User | None:
+        return await _get_user_by_field('id', id, db, strict)
 
     @staticmethod
-    async def update_password(db: AsyncSession, user: User, new_password: str) -> User | None:
-        return await _update_field(db, user, "password", new_password)
+    async def update_password(user: User, new_password: str, db: AsyncSession) -> User | None:
+        return await _update_field(user, "password", new_password, db)
     
     @staticmethod
-    async def update_username(db: AsyncSession, user: User, new_username: str) -> User | None:
-        existing_username = await UserService.get_user_by_username(db, new_username)
+    async def update_username(user: User, new_username: str, db: AsyncSession) -> User | None:
+        existing_username = await UserService.get_user_by_username(new_username, db)
         if existing_username is not None:
             raise AlreadyExistsError("Username already in use")
-        return await _update_field(db, user, "username", new_username)
+        return await _update_field(user, "username", new_username, db)
 
     @staticmethod
-    async def update_email(db: AsyncSession, user: User, new_email: str) -> User | None:
-        existing_email = await UserService.get_user_by_email(db, new_email)
+    async def update_email(user: User, new_email: str, db: AsyncSession) -> User | None:
+        existing_email = await UserService.get_user_by_email(new_email, db)
         if existing_email is not None:
             raise AlreadyExistsError("Email already in use")
-        return await _update_field(db, user, "email", new_email)
+        return await _update_field(user, "email", new_email, db)
 
     @staticmethod
-    async def update_pfp(db: AsyncSession, user: User, new_pfp: str) -> User | None:
-        return await _update_field(db, user, "pfp_url", new_pfp)
+    async def update_pfp(user: User, new_pfp: str, db: AsyncSession) -> User | None:
+        return await _update_field(user, "pfp_url", new_pfp, db)
 
 
     

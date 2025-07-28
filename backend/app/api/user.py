@@ -13,12 +13,12 @@ router = APIRouter(prefix="/user", tags=["user"])
 @router.post("/register", response_model=UserReadPublic)
 @handle_exceptions
 async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
-    return await UserService.create_user(db, user)
+    return await UserService.create_user(user, db)
 
 @router.post("/auth/login", response_model=Token)
 @handle_exceptions
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
-    token = await UserService.login(db, form_data.username, form_data.password)
+    token = await UserService.login(form_data.username, form_data.password, db)
     return {"access_token": token, "token_type": "bearer"}
 
 @router.get("/me", response_model=UserReadPrivate)
@@ -29,24 +29,24 @@ async def read_self(user: User = Depends(get_current_user)):
 @router.get("/{username}", response_model=UserReadPublic)
 @handle_exceptions
 async def read_user(username: str, db: AsyncSession = Depends(get_db)):
-    return await UserService.get_user_by_username(db, username, True)
+    return await UserService.get_user_by_username(username, db, True)
 
 @router.patch("/update/pfp", response_model=UserReadPublic)
 @handle_exceptions
 async def update_pfp(new_pfp: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await UserService.update_pfp(db, user, new_pfp)
+    return await UserService.update_pfp(user, new_pfp, db)
 
 @router.patch("/update/password", response_model=UserReadPublic)
 @handle_exceptions
 async def update_password(new_password: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await UserService.update_password(db, user, new_password)
+    return await UserService.update_password(user, new_password, db)
 
 @router.patch("/update/username", response_model=UserReadPublic)
 @handle_exceptions
 async def update_username(new_username: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await UserService.update_username(db, user, new_username)
+    return await UserService.update_username(user, new_username, db)
 
 @router.patch("/update/email", response_model=UserReadPublic)
 @handle_exceptions
 async def update_email(new_email: UserUpdateEmail, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await UserService.update_email(db, user, new_email.email)
+    return await UserService.update_email(user, new_email.email, db)

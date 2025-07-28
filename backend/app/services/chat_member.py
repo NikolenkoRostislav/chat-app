@@ -16,8 +16,8 @@ class ChatMemberService:
 
     @staticmethod
     async def get_chat_member_by_user_and_chat_id(user_id: int, chat_id: int, db: AsyncSession, strict: bool = False) -> ChatMember | None:
-        chat = await ChatService.get_chat_by_id(db, chat_id)
-        user = await UserService.get_user_by_id(db, user_id)
+        chat = await ChatService.get_chat_by_id(chat_id, db)
+        user = await UserService.get_user_by_id(user_id, db)
         if chat is None:
             raise NotFoundError("Chat not found")
         elif user is None:
@@ -35,7 +35,7 @@ class ChatMemberService:
 
     @staticmethod
     async def get_chat_members_by_chat_id(chat_id: int, db: AsyncSession, current_user: User) -> list[ChatMember]:
-        chat = await ChatService.get_chat_by_id(db, chat_id)
+        chat = await ChatService.get_chat_by_id(chat_id, db)
         if chat is None:
             raise NotFoundError("Chat not found")
         if not await ChatMemberService.check_user_membership(current_user.id, chat_id, db) and chat.creator_id != current_user.id:
@@ -45,7 +45,7 @@ class ChatMemberService:
 
     @staticmethod
     async def get_chat_members_by_user_id(user_id: int, db: AsyncSession, current_user: User) -> list[ChatMember]:
-        user = await UserService.get_user_by_id(db, user_id)
+        user = await UserService.get_user_by_id(user_id, db)
         if user is None:
             raise NotFoundError("User not found")
         if current_user.id != user_id:
@@ -55,8 +55,8 @@ class ChatMemberService:
 
     @staticmethod
     async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession, current_user: User) -> ChatMember:
-        chat = await ChatService.get_chat_by_id(db, chat_id)
-        user = await UserService.get_user_by_id(db, user_id)
+        chat = await ChatService.get_chat_by_id(chat_id, db)
+        user = await UserService.get_user_by_id(user_id, db)
         if chat is None:
             raise NotFoundError("Chat not found")
         if user is None:
@@ -76,8 +76,8 @@ class ChatMemberService:
 
     @staticmethod
     async def remove_member(user_id: int, chat_id: int, db: AsyncSession, current_user: User):
-        user = await UserService.get_user_by_id(db, user_id)
-        chat = await ChatService.get_chat_by_id(db, chat_id)
+        user = await UserService.get_user_by_id(user_id, db)
+        chat = await ChatService.get_chat_by_id(chat_id, db)
         if current_user.id != chat.creator_id:
             raise PermissionDeniedError("You lack permission to remove this user from the chat")
         if not await ChatMemberService.check_user_membership(user_id, chat_id, db):

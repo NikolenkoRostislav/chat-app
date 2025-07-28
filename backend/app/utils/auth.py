@@ -14,10 +14,10 @@ def create_access_token(data: dict) -> str:
     expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return jwt.encode({**data, "exp": expire}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-async def authenticate(db: AsyncSession, id: int, password: str) -> User | None: 
+async def authenticate(id: int, password: str, db: AsyncSession) -> User | None: 
     from app.services.user import UserService
 
-    user = await UserService.get_user_by_id(db, id) 
+    user = await UserService.get_user_by_id(id, db) 
     if user and verify_password(password, user.password_hash): 
         return user 
     return None   
@@ -32,7 +32,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
             raise HTTPException(status_code=401, detail="Token missing user ID")
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
-    user = await UserService.get_user_by_id(db, user_id) 
+    user = await UserService.get_user_by_id(user_id, db) 
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
