@@ -9,6 +9,7 @@ app = FastAPI()
 app.include_router(user_router)
 app.include_router(chat_router)
 app.include_router(chat_member_router)
+app.include_router(message_router)
 
 origins = settings.ALLOWED_ORIGINS
 

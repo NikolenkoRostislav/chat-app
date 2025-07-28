@@ -4,16 +4,16 @@ from datetime import datetime
 class MessageBase(BaseModel):
     content: str
     chat_id: int
-    sender_id: int
 
-class MessageOut(MessageBase):
+class MessageRead(MessageBase):
     id: int
+    sender_id: int
     timestamp: datetime
 
     class Config:
         from_attributes = True
 
-class MessageIn(MessageBase):
+class MessageSend(MessageBase):
     pass
 
 class MessageUpdate(BaseModel):
