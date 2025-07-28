@@ -30,6 +30,13 @@ class ChatMemberService:
         return chat_member is not None
 
     @staticmethod
+    async def check_admin_status(user_id: int, chat_id: int, db: AsyncSession) -> bool:
+        chat_member = await ChatMemberService.get_chat_member_by_user_and_chat_id(user_id, chat_id, db)
+        if chat_member is None:
+            return False
+        return chat_member.is_admin
+
+    @staticmethod
     async def get_chat_members_by_chat_id(chat_id: int, db: AsyncSession, current_user: User) -> list[ChatMember]:
         chat = await ChatService.get_chat_by_id(chat_id, db, True)
         if not await ChatMemberService.check_user_membership(current_user.id, chat_id, db) and chat.creator_id != current_user.id:
@@ -46,16 +53,16 @@ class ChatMemberService:
         return result.scalars().all()
 
     @staticmethod
-    async def add_user_to_chat(user_id: int, chat_id: int, db: AsyncSession, current_user: User) -> ChatMember:
-        chat = await ChatService.get_chat_by_id(chat_id, db, True)
-        user = await UserService.get_user_by_id(user_id, db, True)
-        if not await ChatMemberService.check_user_membership(current_user.id, chat_id, db) and chat.creator_id != current_user.id:
+    async def add_user_to_chat(chat_member_data: ChatMemberCreate, db: AsyncSession, current_user: User) -> ChatMember:
+        chat = await ChatService.get_chat_by_id(chat_member_data.chat_id, db, True)
+        user = await UserService.get_user_by_id(chat_member_data.user_id, db, True)
+        if not await ChatMemberService.check_admin_status(current_user.id, chat_member_data.chat_id, db) and chat.creator_id != current_user.id:
             raise PermissionDeniedError("You lack permission to add users to this chat")
-        if await ChatMemberService.check_user_membership(user_id, chat_id, db):
+        if await ChatMemberService.check_user_membership(chat_member_data.user_id, chat_member_data.chat_id, db):
             raise AlreadyExistsError("User already in chat")
         chat_member = ChatMember(
-            user_id=user_id,
-            chat_id=chat_id
+            user_id=chat_member_data.user_id,
+            chat_id=chat_member_data.chat_id
         )
         db.add(chat_member)
         await db.commit()
@@ -66,7 +73,11 @@ class ChatMemberService:
     async def remove_member(user_id: int, chat_id: int, db: AsyncSession, current_user: User):
         user = await UserService.get_user_by_id(user_id, db)
         chat = await ChatService.get_chat_by_id(chat_id, db)
-        if current_user.id != chat.creator_id:
+        current_user_is_admin = await ChatMemberService.check_admin_status(current_user.id, chat_id, db)
+        user_to_delete_is_admin = await ChatMemberService.check_admin_status(user_id, chat_id, db)
+        if user_to_delete_is_admin and current_user.id != chat.creator_id:
+            raise PermissionDeniedError("You cannot remove an admin from the chat unless you are the creator")
+        if current_user.id != chat.creator_id and not current_user_is_admin:
             raise PermissionDeniedError("You lack permission to remove this user from the chat")
         if not await ChatMemberService.check_user_membership(user_id, chat_id, db):
             raise InvalidEntryError("User is not a member of this chat")
@@ -74,3 +85,15 @@ class ChatMemberService:
         await db.delete(chat_member)
         await db.commit()
         return {"detail": "User removed from chat"}
+
+    @staticmethod
+    async def update_chat_member_status(chat_member_id: int, is_admin: bool, db: AsyncSession, current_user: User) -> ChatMember:
+        chat_member = await ChatMemberService.get_chat_member_by_id(chat_member_id, db, True)
+        chat = await ChatService.get_chat_by_id(chat_member.chat_id, db, True)
+        if current_user.id != chat.creator_id:
+            raise PermissionDeniedError("You lack permission to update this chat member's admin status")
+        setattr(chat_member, "is_admin", is_admin)
+        db.add(chat_member)
+        await db.commit()
+        await db.refresh(chat_member)
+        return chat_member

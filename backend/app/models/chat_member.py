@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from app.db import Base
 
@@ -8,6 +8,7 @@ class ChatMember(Base):
     id = Column(Integer, primary_key=True, index=True)
     chat_id = Column(Integer, ForeignKey("chats.id"), index=True)
     user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    is_admin = Column(Boolean, default=False)
 
     __table_args__ = (
         UniqueConstraint("chat_id", "user_id", name="uix_chat_user"),

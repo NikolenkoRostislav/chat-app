@@ -6,6 +6,7 @@ class ChatMemberBase(BaseModel):
 
 class ChatMemberRead(ChatMemberBase):
     id: int
+    is_admin: bool
 
     class Config:
         from_attributes = True
