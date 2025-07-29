@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
-from app.schemas import UserCreate, UserUpdateEmail, UserReadPrivate, UserReadPublic, UserLogin, Token
+from app.schemas import UserCreate, UserUpdateEmail, UserUpdatePassword, UserUpdateUsername, UserReadPrivate, UserReadPublic, UserLogin, Token
 from app.services import UserService
 from app.utils.auth import get_current_user
 from app.utils.exceptions import handle_exceptions
@@ -38,13 +38,13 @@ async def update_pfp(new_pfp: str, user: User = Depends(get_current_user), db: A
 
 @router.patch("/update/password", response_model=UserReadPublic)
 @handle_exceptions
-async def update_password(new_password: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await UserService.update_password(user, new_password, db)
+async def update_password(new_password: UserUpdatePassword, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    return await UserService.update_password(user, new_password.password, db)
 
 @router.patch("/update/username", response_model=UserReadPublic)
 @handle_exceptions
-async def update_username(new_username: str, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await UserService.update_username(user, new_username, db)
+async def update_username(new_username: UserUpdateUsername, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    return await UserService.update_username(user, new_username.username, db)
 
 @router.patch("/update/email", response_model=UserReadPublic)
 @handle_exceptions

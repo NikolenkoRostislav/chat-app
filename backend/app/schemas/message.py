@@ -1,8 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Annotated
 from datetime import datetime
 
 class MessageBase(BaseModel):
-    content: str
+    content: Annotated[str, Field(min_length=1, max_length=500)]
     chat_id: int
 
 class MessageRead(MessageBase):

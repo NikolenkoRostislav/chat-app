@@ -31,5 +31,5 @@ def handle_exceptions(func):
         except AlreadyExistsError as e:
             raise HTTPException(status_code=409, detail=str(e))
         except Exception:
-            raise HTTPException(status_code=500, detail="Something went wrong again")
+            raise HTTPException(status_code=500, detail="Something went wrong")
     return wrapper
