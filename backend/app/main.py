@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.config import settings
 from app.db import engine, Base
+from app.middleware.logging import setup_logging
 from app.models import *
 from app.api import *
 from app.utils.exceptions import InvalidEntryError, NotFoundError, PermissionDeniedError, AlreadyExistsError
@@ -38,6 +39,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+setup_logging(app)
 
 @app.on_event("startup")
 async def on_startup():
