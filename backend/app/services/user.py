@@ -44,8 +44,10 @@ class UserService:
     @staticmethod
     async def login(username: str, password: str, db: AsyncSession) -> str:
         user = await UserService.get_user_by_username(username, db)
-        if not user or not verify_password(password, user.password_hash):
-            raise InvalidEntryError("Invalid credentials")
+        if not user:
+            raise InvalidEntryError("Invalid username")
+        if not verify_password(password, user.password_hash):
+            raise InvalidEntryError("Invalid password")
         return create_access_token({"sub": str(user.id)})
 
     @staticmethod
@@ -62,7 +64,7 @@ class UserService:
 
     @staticmethod
     async def update_password(user: User, new_password: str, db: AsyncSession) -> User | None:
-        return await _update_field(user, "password", new_password, db)
+        return await _update_field(user, "password_hash", get_password_hash(new_password), db)
     
     @staticmethod
     async def update_username(user: User, new_username: str, db: AsyncSession) -> User | None:
