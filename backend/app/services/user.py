@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from datetime import datetime
 from app.models import User
 from app.schemas import UserCreate
 from app.utils.auth import create_access_token
@@ -84,5 +85,6 @@ class UserService:
     async def update_pfp(user: User, new_pfp: str, db: AsyncSession) -> User | None:
         return await _update_field(user, "pfp_url", new_pfp, db)
 
-
-    
+    @staticmethod
+    async def update_last_online(user: User, db: AsyncSession) -> User | None:
+        return await _update_field(user, "last_online", datetime.utcnow(), db)
