@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 from datetime import datetime
 from app.models import User
 from app.schemas import UserCreate
-from app.utils.auth import create_access_token
+from app.utils.auth import create_access_token, authenticate_user
 from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyExistsError, InvalidEntryError
 from app.utils.security import get_password_hash, verify_password
 
@@ -47,9 +47,7 @@ class UserService:
         user = await UserService.get_user_by_username(username, db)
         if not user:
             raise InvalidEntryError("Invalid username")
-        if not verify_password(password, user.password_hash):
-            raise InvalidEntryError("Invalid password")
-        return create_access_token({"sub": str(user.id)})
+        return authenticate_user(user, password, db)
 
     @staticmethod
     async def get_user_by_username(username: str, db: AsyncSession, strict: bool = False) -> User | None:
