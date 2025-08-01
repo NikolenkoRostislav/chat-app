@@ -10,10 +10,10 @@ from app.utils.security import get_password_hash, verify_password
 async def _get_user_by_field(field_name: str, value, db: AsyncSession, strict: bool) -> User | None:
     field = getattr(User, field_name)
     result = await db.execute(select(User).where(field == value))
-    chat = result.scalar_one_or_none()
-    if strict and chat is None:
+    user = result.scalar_one_or_none()
+    if strict and user is None:
         raise NotFoundError(f"User with {field_name} '{value}' not found")
-    return chat
+    return user
 
 async def _update_field(user: User, field_name: str, value, db: AsyncSession) -> User | None:
     setattr(user, field_name, value)
