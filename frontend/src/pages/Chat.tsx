@@ -33,8 +33,7 @@ export default function Chat() {
                 <h1>{t('greeting')}</h1>
                 <p>chat with id {chat_id} page placegolder text</p>
                 {messages.map((message, index) => (               
-                <Message key={index} message={message}/>
-            ))}
+                <Message key={index} message={message}/> ))}
             </main>
         </>
     );
