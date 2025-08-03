@@ -43,7 +43,6 @@ export default function Register() {
         }
     };
 
-
     return (
         <main>
             <div className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
