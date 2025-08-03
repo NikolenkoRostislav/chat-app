@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import RouteButton from "../components/RouteButton";
 
 export default function Login() {
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -40,38 +41,46 @@ export default function Login() {
     };
 
     return (
-        <main className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
-            <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+        <main>
+            <div className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
+                <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <label>
-                    Username:
-                    <input
-                        type="username"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        required
-                        className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
-                        placeholder="username"
-                    />
-                </label>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    <label>
+                        Username:
+                        <input
+                            type="username"
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
+                            required
+                            className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+                            placeholder="username"
+                        />
+                    </label>
 
-                <label>
-                    Password:
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                        className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
-                        placeholder="********"
-                    />
-                </label>
+                    <label>
+                        Password:
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            required
+                            className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+                            placeholder="********"
+                        />
+                    </label>
 
-                <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
-                    Log In
-                </button>
-            </form>
+                    <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+                        Log In
+                    </button>
+                </form>
+            </div>
+            <div className="text-center mt-4">
+                <RouteButton route="register">
+                    <p className="text-blue-600 hover:underline">Don't have an account? Register here</p>
+                </RouteButton>
+            </div>
         </main>
+        
     );
 }
