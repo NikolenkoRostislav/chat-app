@@ -8,7 +8,7 @@ sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 
 connected_users = {}
 
-def _get_user_by_sid(sid):
+async def _get_user_by_sid(sid):
     return connected_users.get(sid)
     if user is None:
         await sio.disconnect(sid)
