@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Register() {
     const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -10,40 +11,55 @@ export default function Login() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const formData = new URLSearchParams();
-        formData.append("username", username);
-        formData.append("password", password);
+        const payload = {
+            email,
+            username,
+            password,
+            pfp_url: " "
+        };
 
         try {
-            const response = await fetch(`${BACKEND_URL}/user/auth/login`, {
+            const response = await fetch(`${BACKEND_URL}/user/register`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/json"
                 },
-                body: formData.toString(),
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                alert("Login failed: " + (errorData.detail || response.statusText));
+                alert("Registration failed: " + (errorData.detail || response.statusText));
                 return;
             }
 
             const data = await response.json();
-            console.log("Logged in! Token:", data.access_token);
-            localStorage.setItem("token", data.access_token);
-            navigate("/");
+            console.log("Registered successfully! User ID:", data.user_id);
+            navigate("/login");
         } catch (err) {
             alert("Network error, please try again later.");
             console.error(err);
         }
     };
 
+
     return (
         <main className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
-            <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">Register</h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <label>
+                    Email:
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        required
+                        className="w-full border border-gray-300 rounded px-3 py-2 mt-1"
+                        placeholder="you@example.com"
+                    />
+                </label>
+
                 <label>
                     Username:
                     <input
@@ -69,7 +85,7 @@ export default function Login() {
                 </label>
 
                 <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
-                    Log In
+                    Register
                 </button>
             </form>
         </main>
