@@ -1,35 +1,31 @@
 import { useTranslation } from 'react-i18next';
 import ChatButton from '../components/ChatButton';
+import useAuthFetch from "../hooks/useAuthFetch";
 
 export default function Home() {
     const { t } = useTranslation();
-    const chats = [
-        { 
-            chat_id: "1", 
-            chat_name: "Chat One", 
-            chat_pfp: "https://example.com/chat1.jpg", 
-            last_message: "Last message in Chat One" 
-        },
-        { 
-            chat_id: "2", 
-            chat_name: "Chat Two", 
-            chat_pfp: "https://example.com/chat2.jpg", 
-            last_message: "Last message in Chat Two" 
-        },
-        { 
-            chat_id: "3", 
-            chat_name: "Chat Three", 
-            chat_pfp: "https://example.com/chat3.jpg", 
-            last_message: "Last message in Chat Three" 
-        },
-    ];
+    type MembershipType = {
+        chat_id: string;
+        chat_name: string; 
+        chat_pfp: string; 
+        last_message: string; 
+    };
+
+    const { data: memberships, loading, error } = useAuthFetch("/chat-member/user-memberships/me");
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
 
     return (
         <main>
             <h1>{t('greeting')}</h1>
             <p>home page placegolder text</p>
-            {chats.map((chat, index) => (               
-            <ChatButton key={index} chat_button={chat}/> ))}
+            {memberships.map((membership: MembershipType, index: number) => (          
+            <ChatButton key={index} chat_button={{
+                chat_id: membership.chat_id,
+                chat_name: `Chat ${membership.chat_id}`,
+                chat_pfp: "https://example.com/chat.jpg",
+                last_message: `Last message in Chat ${membership.chat_id}`
+            }}/> ))}
         </main>
     );
 }

@@ -7,7 +7,7 @@ from app.models import Chat, User, ChatMember
 from app.utils.auth import get_current_user
 from app.utils.exceptions import handle_exceptions
 
-router = APIRouter(prefix="/chat_member", tags=["chat_member"])
+router = APIRouter(prefix="/chat-member", tags=["chat_member"])
 
 @router.post("/join", response_model=ChatMemberRead)
 @handle_exceptions
