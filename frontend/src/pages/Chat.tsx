@@ -1,34 +1,27 @@
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Message from '../components/Message';
+import type { MessageType } from '../components/Message';
 import ChatNav from '../components/ChatNav';
+import useAuthFetch from '../hooks/useAuthFetch';
+import useCurrentUserID from '../hooks/useCurrentUserID';
 
 export default function Chat() {
     const { chat_id } = useParams<{ chat_id: string }>();
     const { t } = useTranslation();
-    const messages = [
-        { 
-            sender_name: "John Doe", 
-            sender_pfp: "https://example.com/pfp.jpg",
-            content: "Hello, this is a message!", 
-            sent_at: new Date(),
-            is_own_message: false
-        },
-        { 
-            sender_name: "Don Jhoe", 
-            sender_pfp: "https://example.com/pfp.jpg",
-            content: "Hi, this is a different message!", 
-            sent_at: new Date(),
-            is_own_message: true
-        },
-        { 
-            sender_name: "Don Jhoe", 
-            sender_pfp: "https://example.com/pfp.jpg",
-            content: "And this is a long message that should wrap properly across multiple lines to ensure it looks good in the chat interface. Let's see how it handles this text.", 
-            sent_at: new Date(),
-            is_own_message: true
-        },
-    ];
+    
+    const { data: message_data, loading, error } = useAuthFetch(`/message/chat-messages/${chat_id}`);
+    const { id: currentUserId } = useCurrentUserID();
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
+
+    const messages: MessageType[] = (message_data as any[]).map((m) => ({
+        sender_name: `${m.sender_id}'s name`,
+        sender_pfp: `${m.sender_id}'s pfp`,
+        content: m.content,
+        sent_at: new Date(m.timestamp),
+        is_own_message: m.sender_id == currentUserId,
+    }));
 
     return (
         <>  
@@ -41,8 +34,14 @@ export default function Chat() {
             <main>
                 <h1>{t('greeting')}</h1>
                 <p>chat with id {chat_id} page placegolder text</p>
-                {messages.map((message, index) => (               
-                <Message key={index} message={message}/> ))}
+                {messages.map((message: MessageType, index: number) => (          
+                    <Message key={index} message={{
+                        sender_name: message.sender_name, 
+                        sender_pfp: message.sender_pfp,
+                        content: message.content, 
+                        sent_at: message.sent_at,
+                        is_own_message: message.is_own_message
+                    }}/> ))}
             </main>
         </>
     );

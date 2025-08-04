@@ -1,4 +1,4 @@
-type MessageType = {
+export type MessageType = {
     sender_name: string;
     sender_pfp: string;
     content: string;
