@@ -24,6 +24,11 @@ async def get_user_messages_in_chat(chat_id: int, user_id: int, db: AsyncSession
 async def get_chat_messages(chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     return await MessageService.get_chat_messages(chat_id, db, current_user)
 
+@router.get("/chat-messages/full-info/{chat_id}")
+@handle_exceptions
+async def get_chat_messages(chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await MessageService.get_chat_messages_full(chat_id, db, current_user)
+
 @router.delete("/{message_id}")
 @handle_exceptions
 async def delete_message(message_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models import User, Message
-from app.schemas import MessageSend
+from app.schemas import MessageSend, UserReadPublic
 from app.services import ChatMemberService, ChatService
 from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyExistsError, InvalidEntryError
 
@@ -51,3 +51,23 @@ class MessageService:
             raise PermissionDeniedError("You are not a member of this chat")
         result = await db.execute(select(Message).where(Message.chat_id == chat_id))
         return result.scalars().all()
+
+    @staticmethod
+    async def get_chat_messages_full(chat_id: int, db: AsyncSession, current_user: User):
+        chat_messages = await MessageService.get_chat_messages(chat_id, db, current_user)
+        user_ids = list(set(message.sender_id for message in chat_messages))
+        if user_ids is None:
+            return []
+        result = await db.execute(select(User).where(User.id.in_(user_ids)))
+        users = result.scalars().all()
+        user_map = {user.id: user for user in users}
+        full_messages = []
+        for message in chat_messages:
+            user = user_map.get(message.sender_id)
+            full_messages.append({
+                "sender_id": message.sender_id,
+                "content": message.content,
+                "sent_at": message.timestamp,
+                "user": UserReadPublic.from_orm(user)
+            })
+        return full_messages

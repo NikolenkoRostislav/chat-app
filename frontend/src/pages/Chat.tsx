@@ -10,16 +10,16 @@ export default function Chat() {
     const { chat_id } = useParams<{ chat_id: string }>();
     const { t } = useTranslation();
     
-    const { data: message_data, loading, error } = useAuthFetch(`/message/chat-messages/${chat_id}`);
+    const { data: message_data, loading, error } = useAuthFetch(`/message/chat-messages/full-info/${chat_id}`);
     const { id: currentUserId } = useCurrentUserID();
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
     const messages: MessageType[] = (message_data as any[]).map((m) => ({
-        sender_name: `${m.sender_id}'s name`,
-        sender_pfp: `${m.sender_id}'s pfp`,
+        sender_name: m.user.username,
+        sender_pfp: m.user.pfp_url,
         content: m.content,
-        sent_at: new Date(m.timestamp),
+        sent_at: new Date(m.sent_at),
         is_own_message: m.sender_id == currentUserId,
     }));
 
