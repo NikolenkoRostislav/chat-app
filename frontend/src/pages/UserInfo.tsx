@@ -1,21 +1,16 @@
-import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
+import useFetch from '../hooks/useFetch';
 
 export default function UserInfo() {
     const { username } = useParams<{ username: string }>();
-    const [user, setUser] = useState<any>(null);
 
-    useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${username}`)
-        .then(res => {
-            if (!res.ok) throw new Error("user not found");
-            return res.json();
-        })
-        .then(data => setUser(data))
-        .catch(console.error);
-    }, [username]);
+    if (!username) return <p className="text-center mt-10">No username provided.</p>;
 
-    if (!user) return <p className="text-center mt-10">Loading user data...</p>;
+    const { data: user, loading, error } = useFetch(`/user/${username}`);
+
+    if (loading) return <p className="text-center mt-10">Loading user data...</p>;
+    if (error) return <p>Error: {error}</p>;
+    if (!user) return <p>User not found.</p>;
 
     const rawDate = user.last_online;
     const cleanedDateStr = rawDate.split('.')[0] + 'Z';
