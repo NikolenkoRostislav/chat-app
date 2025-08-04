@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RouteButton from "../components/RouteButton";
+import usePost from "../hooks/usePost";
 
 export default function Register() {
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const { post, loading, error } = usePost();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,26 +21,11 @@ export default function Register() {
         };
 
         try {
-            const response = await fetch(`${BACKEND_URL}/user/register`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                alert("Registration failed: " + (errorData.detail || response.statusText));
-                return;
-            }
-
-            const data = await response.json();
+            const data = await post("/user/register", payload);
             console.log("Registered successfully! User ID:", data.user_id);
             navigate("/login");
         } catch (err) {
-            alert("Network error, please try again later.");
-            console.error(err);
+            alert("Registration failed: " + error);
         }
     };
 
@@ -64,7 +50,7 @@ export default function Register() {
                     <label>
                         Username:
                         <input
-                            type="username"
+                            type="text"
                             value={username}
                             onChange={e => setUsername(e.target.value)}
                             required
@@ -86,7 +72,7 @@ export default function Register() {
                     </label>
 
                     <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
-                        Register
+                        {loading ? "Registering..." : "Register"}
                     </button>
                 </form>
             </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 /**
- * Custom hook to fetch authenticated data from backend.
+ * Custom hook to fetch data from backend.
  * @param {string} route - The API route to fetch data from (must start with '/').
  * @returns {Object} - { data, loading, error }
  *   - data: fetched data or null while loading
