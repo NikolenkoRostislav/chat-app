@@ -53,6 +53,15 @@ class ChatMemberService:
         return result.scalars().all()
 
     @staticmethod
+    async def get_chats_by_current_user(db: AsyncSession, current_user: User) -> list[Chat]:
+        chat_members = await ChatMemberService.get_chat_members_by_user_id(current_user.id, db, current_user)
+        chat_ids = [member.chat_id for member in chat_members]
+        if chat_ids is None:
+            return []
+        result = await db.execute(select(Chat).where(Chat.id.in_(chat_ids)))
+        return result.scalars().all()
+
+    @staticmethod
     async def add_user_to_chat(chat_member_data: ChatMemberCreate, db: AsyncSession, current_user: User) -> ChatMember:
         chat = await ChatService.get_chat_by_id(chat_member_data.chat_id, db, True)
         user = await UserService.get_user_by_id(chat_member_data.user_id, db, True)
