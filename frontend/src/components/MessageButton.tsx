@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function MessageButton({ route, chat_id }: Props) {
-    const { post, loading, error } = useAuthPost();
+    const { post, loading } = useAuthPost();
     const [message, setMessage] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
