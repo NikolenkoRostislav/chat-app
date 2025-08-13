@@ -5,6 +5,7 @@ import type { MessageType } from '../components/Message';
 import ChatNav from '../components/ChatNav';
 import useAuthFetch from '../hooks/useAuthFetch';
 import useCurrentUserID from '../hooks/useCurrentUserID';
+import MessageButton from '../components/MessageButton';
 
 export default function Chat() {
     const { chat_id } = useParams<{ chat_id: string }>();
@@ -42,6 +43,7 @@ export default function Chat() {
                         sent_at: message.sent_at,
                         is_own_message: message.is_own_message
                     }}/> ))}
+                {chat_id && <MessageButton route={"/message/"} chat_id={ chat_id }/>}
             </main>
         </div>
     );

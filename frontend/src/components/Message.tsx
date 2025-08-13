@@ -26,7 +26,7 @@ export default function Message({ message }: Props) {
                             {message.sent_at.toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                         </time>
                     </div>
-                    <p className="mt-1 text-gray-700 whitespace-pre-wrap">{message.content}</p>
+                    <p className="mt-1 text-gray-700 whitespace-pre-wrap break-all">{message.content}</p>
                 </div>
             </div>
         </div>
