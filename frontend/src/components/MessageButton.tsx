@@ -49,7 +49,10 @@ export default function MessageButton({ route, chat_id }: Props) {
                 placeholder="..."
             />
 
-            <button type="submit" className="flex-none bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-600 disabled:opacity-50" disabled={loading}>
+            <button 
+                type="submit" 
+                className="flex-none bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-600 disabled:opacity-50" 
+                disabled={loading}>
                 ➤
             </button>
         </form>

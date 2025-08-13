@@ -12,6 +12,7 @@ export default function Chat() {
     const { t } = useTranslation();
     
     const { data: message_data, loading, error } = useAuthFetch(`/message/chat-messages/full-info/${chat_id}`);
+    const { data: chat_data } = useAuthFetch(`/chat/${chat_id}`);
     const { id: currentUserId } = useCurrentUserID();
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
@@ -27,8 +28,8 @@ export default function Chat() {
     return (
         <div className="flex flex-col h-screen">  
             <ChatNav
-                chat_name="Chat Name"
-                chat_pfp="https://example.com/chat-icon.jpg"
+                chat_name={chat_data.name}
+                chat_pfp={chat_data.icon_url}
                 is_group={false}
                 member_count={2}
             />
