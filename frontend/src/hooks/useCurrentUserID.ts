@@ -1,4 +1,4 @@
-import useAuthFetch from "../hooks/useAuthFetch";
+import useAuthFetch from "./useAuthFetch";
 
 export default function useCurrentUserID() {
     const { data: user, loading, error } = useAuthFetch("/user/me");

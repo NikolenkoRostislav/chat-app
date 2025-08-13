@@ -19,6 +19,29 @@ export default function useAuthFetch<T = any>(route: string) {
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
+    const fetch_data = async (route: string, token: string) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${route}`, {headers: { "Authorization": `Bearer ${token}` }});
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail || response.statusText);
+            }
+
+            setData(data);
+        } catch (err: any) {
+            console.error(err);
+            setError(err.message || "Failed to fetch");
+            alert("Session expired. Please login again.");
+            navigate("/login");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -27,29 +50,8 @@ export default function useAuthFetch<T = any>(route: string) {
             return;
         }
 
-        setLoading(true);
-        setError(null);
-
-        fetch(`${import.meta.env.VITE_BACKEND_URL}${route}`, {
-            headers: {
-                "Authorization": `Bearer ${token}`,
-            }
-        })
-        .then(res => {
-            if (!res.ok) throw new Error("Unauthorized");
-            return res.json();
-        })
-        .then(json => {
-            setData(json);
-        })
-        .catch(err => {
-            console.error(err);
-            setError(err.message || "Failed to fetch");
-            alert("Session expired. Please login again.");
-            navigate("/login");
-        })
-        .finally(() => setLoading(false));
-    }, [navigate, route]);
+        fetch_data(route, token);
+    }, [route]);
 
     return { data, loading, error };
 }
