@@ -19,30 +19,33 @@ export default function useAuthFetch<T = any>(route: string) {
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const fetch_data = async (route: string, token: string) => {
-        setLoading(true);
-        setError(null);
-
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${route}`, {headers: { "Authorization": `Bearer ${token}` }});
-
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail || response.statusText);
-            }
-
-            setData(data);
-        } catch (err: any) {
-            console.error(err);
-            setError(err.message || "Failed to fetch");
-            alert("Session expired. Please login again.");
-            navigate("/login");
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
+        const fetch_data = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${route}`, {headers: { "Authorization": `Bearer ${token}` }});
+
+                const data = await response.json();
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        alert("Session expired. Please login again.");
+                        navigate("/login");
+                        return;
+                    }
+                    throw new Error(data.detail || response.statusText);
+                }
+
+                setData(data);
+            } catch (err: any) {
+                console.error(err);
+                setError(err.message || "Failed to fetch");
+            } finally {
+                setLoading(false);
+            }
+        };
+
         const token = localStorage.getItem("token");
         if (!token) {
             alert("Not logged in!");
@@ -50,7 +53,7 @@ export default function useAuthFetch<T = any>(route: string) {
             return;
         }
 
-        fetch_data(route, token);
+        fetch_data();
     }, [route]);
 
     return { data, loading, error };

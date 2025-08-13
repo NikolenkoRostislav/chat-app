@@ -24,14 +24,14 @@ export default function Chat() {
     }));
 
     return (
-        <>  
+        <div className="flex flex-col h-screen">  
             <ChatNav
                 chat_name="Chat Name"
                 chat_pfp="https://example.com/chat-icon.jpg"
                 is_group={false}
                 member_count={2}
             />
-            <main>
+            <main className="max-w-3xl mx-auto p-4">
                 <h1>{t('greeting')}</h1>
                 <p>chat with id {chat_id} page placegolder text</p>
                 {messages.map((message: MessageType, index: number) => (          
@@ -43,6 +43,6 @@ export default function Chat() {
                         is_own_message: message.is_own_message
                     }}/> ))}
             </main>
-        </>
+        </div>
     );
 }

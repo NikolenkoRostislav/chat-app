@@ -14,10 +14,10 @@ type Props = {
 export default function ChatButton({ chat_button }: Props) {
     return (
         <RouteButton route={`chat/${chat_button.chat_id}`}>
-            <div className="chat-button">
-                <img src={chat_button.chat_icon_url} alt={`${chat_button.chat_name} chat icon`} />
-                <h2>{chat_button.chat_name}</h2>
-                {chat_button.last_message && <p className="last-message">{chat_button.last_message}</p>}
+            <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
+                <img src={chat_button.chat_icon_url} alt={`${chat_button.chat_name} chat icon`} className="w-18 h-18 rounded-full object-cover border border-gray-300" />
+                <h2 className="text-lg font-semibold truncate">{chat_button.chat_name}</h2>
+                {chat_button.last_message && <p className="text-sm text-gray-500 truncate">{chat_button.last_message}</p>}
             </div>
         </RouteButton>
     );

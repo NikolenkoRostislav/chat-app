@@ -17,29 +17,29 @@ export default function useFetch<T = any>(route: string) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetch_data = async (route: string) => {
-        setLoading(true);
-        setError(null);
-
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${route}`);
-
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail || response.statusText);
-            }
-
-            setData(data);
-        } catch (err: any) {
-            console.error(err);
-            setError(err.message || "Failed to fetch");
-        } finally {
-            setLoading(false);
-        }
-    }
-
     useEffect(() => {
-        fetch_data(route);
+        const fetch_data = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${route}`);
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail || response.statusText);
+                }
+
+                setData(data);
+            } catch (err: any) {
+                console.error(err);
+                setError(err.message || "Failed to fetch");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetch_data();
     }, [route]);
 
     return { data, loading, error };

@@ -8,15 +8,15 @@ type Props = {
     member_count: number;
 };
 
-export default function Message({chat_name, chat_pfp, is_group, member_count}: Props) {
+export default function ChatNav({chat_name, chat_pfp, is_group, member_count}: Props) {
     return (
-        <nav className="chat-nav">
+        <nav className="flex items-center gap-4 px-4 py-2 bg-white shadow-sm border-b sticky top-0 z-10">
             <RouteButton route="">
                 <p>Home</p>
             </RouteButton>
             <img src={chat_pfp} alt={`${chat_name} chat icon`} />
             <h1>{chat_name}</h1>
-            {is_group ? <p>{member_count} members</p> : <ActivityIndicator activity="online"/>}
+            {is_group ? <p className="text-sm text-gray-500">{member_count} members</p> : <ActivityIndicator activity="online"/>}
         </nav>
     );
 }
