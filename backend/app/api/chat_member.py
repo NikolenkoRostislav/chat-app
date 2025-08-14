@@ -24,6 +24,11 @@ async def get_chat_memberships(db: AsyncSession = Depends(get_db), current_user:
 async def get_chat_members(chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     return await ChatMemberService.get_chat_members_by_chat_id(chat_id, db, current_user)
 
+@router.get("/user-memberships-count/{chat_id}")
+@handle_exceptions
+async def get_chat_member_count(chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await ChatMemberService.get_chat_member_count(chat_id, db, current_user)
+
 @router.get("/chats/me", response_model=list[ChatRead])
 @handle_exceptions
 async def get_chats_me(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):

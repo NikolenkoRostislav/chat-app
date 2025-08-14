@@ -1,3 +1,5 @@
+import default_pfp from '../assets/default-pfp.png';
+
 export type MessageType = {
     sender_name: string;
     sender_pfp: string;
@@ -17,6 +19,11 @@ export default function Message({ message }: Props) {
                 <img
                     src={message.sender_pfp}
                     alt={`${message.sender_name}'s profile picture`}
+                    onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.onerror = null;
+                        img.src = default_pfp;
+                    }}
                     className="w-12 h-12 rounded-full object-cover"
                 />
                 <div className="flex-1">

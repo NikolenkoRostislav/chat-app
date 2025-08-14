@@ -11,8 +11,9 @@ export default function Chat() {
     
     const { data: message_data, loading, error } = useAuthFetch(`/message/chat-messages/full-info/${chat_id}`);
     const { data: chat_data } = useAuthFetch(`/chat/${chat_id}`);
+    const { data: chat_member_data } = useAuthFetch(`/chat-member/user-memberships-count/${chat_id}`);
     const { id: currentUserId } = useCurrentUserID();
-    if (loading || !chat_data) return <p>Loading...</p>;
+    if (loading || !chat_data || !chat_member_data) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
     const messages: MessageType[] = (message_data as any[]).map((m) => ({
@@ -29,7 +30,7 @@ export default function Chat() {
                 chat_name={chat_data.name}
                 chat_pfp={chat_data.icon_url}
                 is_group={false}
-                member_count={2}
+                member_count={chat_member_data}
             />
             <main className="flex-1 flex flex-col max-w-3xl mx-auto p-4">
             {messages.length === 0 ? (

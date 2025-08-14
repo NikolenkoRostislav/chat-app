@@ -45,6 +45,11 @@ class ChatMemberService:
         return result.scalars().all()
 
     @staticmethod
+    async def get_chat_member_count(chat_id: int, db: AsyncSession, current_user: User) -> int:
+        chat_members = await ChatMemberService.get_chat_members_by_chat_id(chat_id, db, current_user)
+        return len(chat_members)
+
+    @staticmethod
     async def get_chat_members_by_user_id(user_id: int, db: AsyncSession, current_user: User) -> list[ChatMember]:
         user = await UserService.get_user_by_id(user_id, db, True)
         if current_user.id != user_id:
