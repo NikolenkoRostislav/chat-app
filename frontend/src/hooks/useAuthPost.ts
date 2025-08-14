@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import useAuthRequest from "./useAuthRequest";
 
 /**
  * Custom hook to post data to backend.
@@ -16,46 +15,8 @@ import { useNavigate } from "react-router-dom";
 * const data = await post("/user/register", payload);
 */
 
-export default function usePost<T = any>() {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [data, setData] = useState<T | null>(null);
-    const navigate = useNavigate();
-
-    const post = async (route: string, payload: any) => {
-        setLoading(true);
-        setError(null);
-
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Not logged in!");
-            navigate("/login");
-            return;
-        }
-
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${route}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || response.statusText);
-            }
-
-            const result = await response.json();
-            setData(result);
-            return result;
-        } catch (err: any) {
-            console.error(err);
-            setError(err.message || "Post failed");
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    };
-
+export default function useAuthPost<T = any>() {
+    const { func, data, loading, error } = useAuthRequest<T>();
+    const post = (route: string, payload: any) => func(route, "POST", payload);
     return { post, data, loading, error };
 }

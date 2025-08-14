@@ -1,4 +1,5 @@
 import useAuthFetch from "../hooks/useAuthFetch";
+/*import useAuthPatch from "../hooks/useAuthPatch";*/
 import default_pfp from '../assets/default-pfp.png';
 
 export default function UserMe() {
