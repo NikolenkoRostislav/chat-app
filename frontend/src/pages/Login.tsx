@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import usePost from "../hooks/usePost";
 import RouteButton from "../components/RouteButton";
 
 export default function Login() {
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const { loading, post } = usePost();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -11,33 +12,15 @@ export default function Login() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const formData = new URLSearchParams();
-        formData.append("username", username);
-        formData.append("password", password);
+        const payload = { username, password };
 
         try {
-            const response = await fetch(`${BACKEND_URL}/user/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: formData.toString(),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                alert("Login failed: " + (errorData.detail || response.statusText));
-                return;
-            }
-
-            const data = await response.json();
-            console.log("Logged in! Token:", data.access_token);
-            localStorage.setItem("token", data.access_token);
+            const result = await post(`/user/auth/login`, payload, true);
+            localStorage.setItem("token", result.access_token);
             navigate("/");
-        } catch (err) {
-            alert("Network error, please try again later.");
-            console.error(err);
-        }
+        } catch (err) { 
+            alert("Login failed: " + err);
+        } 
     };
 
     return (
@@ -71,7 +54,7 @@ export default function Login() {
                     </label>
 
                     <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
-                        Log In
+                        {loading ? "Logging in..." : "Log In"}
                     </button>
                 </form>
             </div>

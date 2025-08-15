@@ -16,6 +16,9 @@ def setup_logging(app):
             start_time = time.time()
             response = await call_next(request)
             duration = (time.time() - start_time) * 1000
-            log_msg = f"{request.method} {request.url.path} - {response.status_code} - {duration:.2f}ms"
+            log_msg = (
+                f"{request.client.host} - {request.method} {request.url.path} "
+                f"?{request.query_params} - {response.status_code} "
+            )
             logging.info(log_msg)
             return response

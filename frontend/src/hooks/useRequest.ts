@@ -1,28 +1,30 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 type Method = "POST" | "PATCH" | "PUT" | "DELETE";
 
 export default function useAuthRequest<T = any>() {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<T | null>(null);
-    const navigate = useNavigate();
 
-    const func = async (route: string, method: Method, payload: any) => {
+    const func = async (route: string, method: Method, payload: any, urlencoded = false) => {
         setLoading(true);
 
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("Not logged in!");
-            navigate("/login");
-            return;
-        }
-
         try {
+            let body;
+            if (urlencoded) {
+                const formData = new URLSearchParams();
+                for (const key in payload) {
+                    formData.append(key, payload[key]);
+                }
+                body = formData.toString();
+            } else {
+                body = JSON.stringify(payload);
+            }
+
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${route}`, {
                 method: method,
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                body: JSON.stringify(payload),
+                headers: { "Content-Type": urlencoded ? "application/x-www-form-urlencoded" : "application/json"},
+                body
             });
 
             const result = await response.json();

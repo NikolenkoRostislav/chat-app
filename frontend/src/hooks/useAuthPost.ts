@@ -16,7 +16,7 @@ import useAuthRequest from "./useAuthRequest";
 */
 
 export default function useAuthPost<T = any>() {
-    const { func, data, loading, error } = useAuthRequest<T>();
+    const { func, data, loading } = useAuthRequest<T>();
     const post = (route: string, payload: any) => func(route, "POST", payload);
-    return { post, data, loading, error };
+    return { post, data, loading };
 }

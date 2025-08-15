@@ -8,7 +8,7 @@ export default function Register() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    const { post, loading, error } = usePost();
+    const { post, loading } = usePost();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,7 +25,7 @@ export default function Register() {
             console.log("Registered successfully! User ID:", data.user_id);
             navigate("/login");
         } catch (err) {
-            alert("Registration failed: " + error);
+            alert("Registration failed: " + err);
         }
     };
 

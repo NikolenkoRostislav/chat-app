@@ -16,7 +16,7 @@ import useAuthRequest from "./useAuthRequest";
 */
 
 export default function useAuthPatch<T = any>() {
-    const { func, data, loading, error } = useAuthRequest<T>();
+    const { func, data, loading } = useAuthRequest<T>();
     const patch = (route: string, payload: any) => func(route, "PATCH", payload);
-    return { patch, data, loading, error };
+    return { patch, data, loading };
 }

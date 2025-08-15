@@ -1,5 +1,5 @@
 import useAuthFetch from "../hooks/useAuthFetch";
-/*import useAuthPatch from "../hooks/useAuthPatch";*/
+import UserUpdateButton from "../components/UserUpdateButton";
 import default_pfp from '../assets/default-pfp.png';
 
 export default function UserMe() {
@@ -23,6 +23,7 @@ export default function UserMe() {
             />
             <p><strong>Email:</strong> {user?.email}</p>
             <p><strong>Username:</strong> {user?.username}</p>
+            {/*<UserUpdateButton route="/user/update/pfp" field_name="new_pfp" />*/}
         </main>
     );
 }

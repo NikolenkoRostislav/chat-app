@@ -13,8 +13,9 @@ export default function Chat() {
     const { data: chat_data } = useAuthFetch(`/chat/${chat_id}`);
     const { data: chat_member_data } = useAuthFetch(`/chat-member/user-memberships-count/${chat_id}`);
     const { id: currentUserId } = useCurrentUserID();
-    if (loading || !chat_data || !chat_member_data) return <p>Loading...</p>;
+    
     if (error) return <p>Error: {error}</p>;
+    if (loading || !chat_data || !chat_member_data) return <p>Loading...</p>;
 
     const messages: MessageType[] = (message_data as any[]).map((m) => ({
         sender_name: m.user.username,
