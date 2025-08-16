@@ -14,7 +14,7 @@ type Props = {
 
 export default function ChatButton({ chat_button }: Props) {
     return (
-        <RouteButton route={`chat/${chat_button.chat_id}`}>
+        <RouteButton route={`/chat/${chat_button.chat_id}`}>
             <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
                 <img 
                     src={chat_button.chat_icon_url} 

@@ -1,3 +1,4 @@
+import RouteButton from './RouteButton';
 import default_pfp from '../assets/default-pfp.png';
 
 export type MessageType = {
@@ -16,16 +17,18 @@ export default function Message({ message }: Props) {
     return (
         <div className={`flex max-w-md mx-auto my-2 ${message.is_own_message ? "justify-end" : "justify-start"}`}>
             <div className={`flex items-start gap-4 p-3 rounded-lg shadow-sm text-left ${message.is_own_message ? "flex-row-reverse bg-blue-100" : "bg-gray-100 "}`}>
-                <img
-                    src={message.sender_pfp}
-                    alt={`${message.sender_name}'s profile picture`}
-                    onError={(e) => {
-                        const img = e.target as HTMLImageElement;
-                        img.onerror = null;
-                        img.src = default_pfp;
-                    }}
-                    className="w-12 h-12 rounded-full object-cover"
-                />
+                <RouteButton route={`/user/${message.sender_name}`}>
+                    <img
+                        src={message.sender_pfp}
+                        alt={`${message.sender_name}'s profile picture`}
+                        onError={(e) => {
+                            const img = e.target as HTMLImageElement;
+                            img.onerror = null;
+                            img.src = default_pfp;
+                        }}
+                        className="w-12 h-12 rounded-full object-cover"
+                    />
+                </RouteButton>
                 <div className="flex-1">
                     <div className="flex items-center justify-between">
                         <h2 className="font-semibold text-gray-900">{message.sender_name}</h2>

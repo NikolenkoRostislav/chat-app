@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
+import HomeButton from '../components/HomeButton';
 import default_pfp from '../assets/default-pfp.png';
 
 export default function UserInfo() {
@@ -18,25 +19,30 @@ export default function UserInfo() {
     const lastOnlineDate = new Date(cleanedDateStr);
 
     return (
-        <main className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
-            <h1 className="text-2xl font-bold mb-4">{user.username}'s Profile</h1>
-            <img 
-                src={user.pfp_url} 
-                alt="Profile" 
-                onError={(e) => {
-                    const img = e.target as HTMLImageElement;
-                    img.onerror = null;
-                    img.src = default_pfp;
-                }}
-                className="w-32 h-32 rounded-full mx-auto mb-4" 
-            />
-            <p><strong>Username:</strong> {user.username}</p>
-            <div>
-                <strong>Last online: </strong> 
-                <time dateTime={lastOnlineDate.toISOString()}>
-                    {lastOnlineDate.toLocaleString()}
-                </time>
-            </div>
-        </main>
+        <>
+            <nav className="m-4">
+                <HomeButton />
+            </nav>
+            <main className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
+                <h1 className="text-2xl font-bold mb-4">{user.username}'s Profile</h1>
+                <img 
+                    src={user.pfp_url} 
+                    alt="Profile" 
+                    onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.onerror = null;
+                        img.src = default_pfp;
+                    }}
+                    className="w-32 h-32 rounded-full mx-auto mb-4" 
+                />
+                <p><strong>Username:</strong> {user.username}</p>
+                <div>
+                    <strong>Last online: </strong> 
+                    <time dateTime={lastOnlineDate.toISOString()}>
+                        {lastOnlineDate.toLocaleString()}
+                    </time>
+                </div>
+            </main>
+        </>
     );
 }

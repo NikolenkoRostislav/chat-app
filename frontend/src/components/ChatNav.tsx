@@ -1,5 +1,5 @@
 /*import ActivityIndicator from "./ActivityIndicator";*/
-import RouteButton from "./RouteButton";
+import HomeButton from "./HomeButton";
 import default_chat from '../assets/default-chat.png';
 
 type Props = {
@@ -12,9 +12,7 @@ type Props = {
 export default function ChatNav({chat_name, chat_pfp, /*is_group,*/ member_count}: Props) {
     return (
         <nav className="flex items-center gap-4 px-4 py-2 bg-white shadow-sm border-b sticky top-0 z-10">
-            <RouteButton route="">
-                <p>⮜</p>
-            </RouteButton>
+            <HomeButton />
             <img 
                 src={chat_pfp} 
                 alt={`${chat_name} chat icon`} 

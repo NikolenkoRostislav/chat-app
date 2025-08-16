@@ -24,7 +24,7 @@ export default function useAuthRequest<T = any>() {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${route}`, {
                 method: method,
                 headers: { "Content-Type": urlencoded ? "application/x-www-form-urlencoded" : "application/json"},
-                body
+                body: body
             });
 
             const result = await response.json();

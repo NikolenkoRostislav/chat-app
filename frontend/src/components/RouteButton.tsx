@@ -9,7 +9,7 @@ type Props = {
 export default function RouteButton({route, children}: Props) {
     return (
         <>  
-            <Link to={`/${route}`}>
+            <Link to={route}>
                 {children}
             </Link>
         </>
