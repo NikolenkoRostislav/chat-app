@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import useAuthPost from "../hooks/useAuthPost";
+import useAuthPost from "../../hooks/useAuthPost";
 
 type Props = {
     route: string;

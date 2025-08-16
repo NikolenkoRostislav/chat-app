@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
-import Message from '../components/Message';
-import type { MessageType } from '../components/Message';
-import ChatNav from '../components/ChatNav';
+import Message from '../components/chat/Message';
+import type { MessageType } from '../components/chat/Message';
+import ChatNav from '../components/chat/ChatNav';
 import useAuthFetch from '../hooks/useAuthFetch';
 import useCurrentUserID from '../hooks/useCurrentUserID';
-import MessageButton from '../components/MessageButton';
+import MessageButton from '../components/chat/MessageButton';
 
 export default function Chat() {
     const { chat_id } = useParams<{ chat_id: string }>();

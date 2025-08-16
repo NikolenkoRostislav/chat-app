@@ -1,6 +1,6 @@
-import RouteButton from "./RouteButton";
-import default_pfp from '../assets/default-pfp.png';
-import useAuthFetch from "../hooks/useAuthFetch";
+import RouteButton from "../RouteButton";
+import default_pfp from '../../assets/default-pfp.png';
+import useAuthFetch from "../../hooks/useAuthFetch";
 
 export default function UserInfoButton() {
     const { data: user, loading } = useAuthFetch("/user/me");

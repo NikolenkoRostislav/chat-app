@@ -1,5 +1,5 @@
-import RouteButton from './RouteButton';
-import default_pfp from '../assets/default-pfp.png';
+import RouteButton from '../RouteButton';
+import default_pfp from '../../assets/default-pfp.png';
 
 export type MessageType = {
     sender_name: string;

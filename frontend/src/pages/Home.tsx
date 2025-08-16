@@ -1,7 +1,7 @@
 import useAuthFetch from "../hooks/useAuthFetch";
-import ChatButton from '../components/ChatButton';
-import UserInfoButton from '../components/UserInfoButton';
-import type { ChatButtonType } from '../components/ChatButton';
+import ChatButton from '../components/home/ChatButton';
+import UserInfoButton from '../components/home/UserInfoButton';
+import type { ChatButtonType } from '../components/home/ChatButton';
 
 export default function Home() {
     const { data: chats_data, loading, error } = useAuthFetch("/chat-member/chats/me");

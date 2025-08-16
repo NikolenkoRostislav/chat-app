@@ -1,6 +1,6 @@
 /*import ActivityIndicator from "./ActivityIndicator";*/
-import HomeButton from "./HomeButton";
-import default_chat from '../assets/default-chat.png';
+import HomeButton from "../HomeButton";
+import default_chat from '../../assets/default-chat.png';
 
 type Props = {
     chat_name: string;

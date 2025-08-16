@@ -1,5 +1,5 @@
-import RouteButton from "./RouteButton";
-import default_chat from '../assets/default-chat.png';
+import RouteButton from "../RouteButton";
+import default_chat from '../../assets/default-chat.png';
 
 export type ChatButtonType = {
     chat_id: string;
@@ -27,7 +27,7 @@ export default function ChatButton({ chat_button }: Props) {
                     className="w-18 h-18 rounded-full object-cover border border-gray-300" 
                 />
                 <h2 className="text-lg font-semibold truncate">{chat_button.chat_name}</h2>
-                {chat_button.last_message && <p className="text-sm text-gray-500 truncate">{chat_button.last_message}</p>}
+                {/*chat_button.last_message && <p className="text-sm text-gray-500 truncate">{chat_button.last_message}</p>*/}
             </div>
         </RouteButton>
     );

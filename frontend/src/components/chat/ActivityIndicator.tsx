@@ -1,3 +1,5 @@
+//Unused for now
+
 export const Activity = {
     Online: "online",
     Offline: "offline",
