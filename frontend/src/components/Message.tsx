@@ -17,7 +17,7 @@ export default function Message({ message }: Props) {
     return (
         <div className={`flex max-w-md mx-auto my-2 ${message.is_own_message ? "justify-end" : "justify-start"}`}>
             <div className={`flex items-start gap-4 p-3 rounded-lg shadow-sm text-left ${message.is_own_message ? "flex-row-reverse bg-blue-100" : "bg-gray-100 "}`}>
-                <RouteButton route={`/user/${message.sender_name}`}>
+                <RouteButton route={message.is_own_message ? "/user/me" : `/user/${message.sender_name}`}>
                     <img
                         src={message.sender_pfp}
                         alt={`${message.sender_name}'s profile picture`}
