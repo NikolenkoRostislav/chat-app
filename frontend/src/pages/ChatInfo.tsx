@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import useAuthFetch from '../hooks/useAuthFetch';
 import HomeButton from '../components/HomeButton';
 import ChatMember from '../components/chat_info/ChatMember';
+import ChatMemberButton from '../components/chat_info/ChatMemberButton';
 import type { ChatMemberType } from '../components/chat_info/ChatMember';
 import default_chat from '../assets/default-chat.png';
 
@@ -51,6 +52,7 @@ export default function ChatInfo() {
                         />
                     ))}
                 </div>
+                <ChatMemberButton chat_id={chat_id} />
             </main>
         </>
     );

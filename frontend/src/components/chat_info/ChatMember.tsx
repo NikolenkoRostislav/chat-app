@@ -19,8 +19,8 @@ export default function ChatMember({ member }: Props) {
     if (user_loading /*|| member_loading*/) return (<p>Loading user data...</p>)
 
     return (
-            <RouteButton route={`/user/${user_data.username}`}>
-        <div className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded transition">
+        <RouteButton route={`/user/${user_data.username}`}>
+            <div className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded transition">
                 <img
                     src={user_data.pfp_url}
                     alt={`${user_data.username}'s profile picture`}
@@ -31,9 +31,9 @@ export default function ChatMember({ member }: Props) {
                     }}
                     className="w-12 h-12 rounded-full object-cover"
                 />
-            <h2 className="font-semibold text-gray-900">{user_data.username}</h2>
-            {/*member_data.is_admin && <span className="text-sm text-blue-500">Admin</span>*/}
-        </div>
-            </RouteButton>
+                <h2 className="font-semibold text-gray-900">{user_data.username}</h2>
+                {/*member_data.is_admin && <span className="text-sm text-blue-500">Admin</span>*/}
+            </div>
+        </RouteButton>
     );
 }

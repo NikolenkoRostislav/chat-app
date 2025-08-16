@@ -3,7 +3,7 @@ import RouteButton from "./RouteButton";
 export default function HomeButton() {
     return (
         <RouteButton route="/">
-            <p>⮜</p>
+            <p><strong>⮜ HOME</strong></p>
         </RouteButton>
     );
 }
