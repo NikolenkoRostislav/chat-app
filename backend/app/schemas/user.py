@@ -48,6 +48,9 @@ class UserUpdatePassword(BaseModel):
 class UserUpdateUsername(BaseModel):
     username: Annotated[str, Field(min_length=3, max_length=25)]
 
+class UserUpdatePFP(BaseModel):
+    pfp_url: str
+
 class UserLogin(BaseModel):
     username: str
     password: str
