@@ -15,7 +15,7 @@ export default function Chat() {
     const { id: currentUserId } = useCurrentUserID();
     
     if (error) return <p>Error: {error}</p>;
-    if (loading || !chat_data || !chat_member_data) return <p>Loading...</p>;
+    if (loading || !chat_data || !chat_member_data || !chat_id) return <p>Loading...</p>;
 
     const messages: MessageType[] = (message_data as any[]).map((m) => ({
         sender_name: m.user.username,
@@ -28,6 +28,7 @@ export default function Chat() {
     return (
         <div className="flex flex-col h-screen">  
             <ChatNav
+                chat_id ={chat_id}
                 chat_name={chat_data.name}
                 chat_pfp={chat_data.icon_url}
                 is_group={false}

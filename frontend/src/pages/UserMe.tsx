@@ -20,7 +20,7 @@ export default function UserMe() {
                 <UserUpdateButton route="/user/update/pfp" field_name="pfp_url">
                     <img 
                         src={user.pfp_url} 
-                        alt="Profile" 
+                        alt="Profile picture" 
                         onError={(e) => {
                             const img = e.target as HTMLImageElement;
                             img.onerror = null;

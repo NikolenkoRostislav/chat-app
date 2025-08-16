@@ -26,6 +26,11 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 async def read_self(user: User = Depends(get_current_user)):
     return user
 
+@router.get("/id/{user_id}", response_model=UserReadPublic)
+@handle_exceptions
+async def read_user(user_id: str, db: AsyncSession = Depends(get_db)):
+    return await UserService.get_user_by_id(int(user_id), db, True)
+
 @router.get("/{username}", response_model=UserReadPublic)
 @handle_exceptions
 async def read_user(username: str, db: AsyncSession = Depends(get_db)):

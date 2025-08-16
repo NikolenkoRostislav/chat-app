@@ -27,11 +27,11 @@ export default function UserUpdateButton({ route, field_name, children }: Props)
     };
 
     return (
-            <div 
-                onClick={handleClick}
-                className={`cursor-pointer hover:bg-gray-100 rounded p-2 ${loading ? "opacity-50 pointer-events-none" : ""}`}
-            >
-                {children}
-            </div>
+        <div 
+            onClick={handleClick}
+            className={`cursor-pointer hover:bg-gray-100 rounded p-2 ${loading ? "opacity-50 pointer-events-none" : ""}`}
+        >
+            {children}
+        </div>
     );
 }
