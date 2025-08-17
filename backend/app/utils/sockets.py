@@ -9,7 +9,7 @@ sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
 connected_users = {}
 
 async def _get_user_by_sid(sid):
-    return connected_users.get(sid)
+    user = connected_users.get(sid)
     if user is None:
         await sio.disconnect(sid)
         return
@@ -36,7 +36,7 @@ async def identify_user(sid, data):
 
 @sio.event 
 async def connect_user_to_chat(sid, data):
-    user = _get_user_by_sid(sid)
+    user = await _get_user_by_sid(sid)
     if user is None:
         return
     chat_id = data.get("chat_id")
@@ -49,7 +49,7 @@ async def connect_user_to_chat(sid, data):
 @sio.event
 async def send_message(sid, data):
     async with SessionLocal() as db:
-        user = _get_user_by_sid(sid)
+        user = await _get_user_by_sid(sid)
         if user is None:
             return
         try:
@@ -72,7 +72,7 @@ async def send_message(sid, data):
 @sio.event 
 async def add_user_to_chat(sid, data):
     async with SessionLocal() as db:
-        user = _get_user_by_sid(sid)
+        user = await _get_user_by_sid(sid)
         if user is None:
             return
         try:
@@ -90,3 +90,11 @@ async def add_user_to_chat(sid, data):
             },
             room=f"chat:{chat_member.chat_id}"
         )
+
+@sio.event
+async def disconnect(sid):
+    user = connected_users.pop(sid, None)
+    if user:
+        print(f"User {user.username} disconnected")
+
+# I'll use sockets in frontend in the next version
