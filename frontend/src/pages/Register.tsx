@@ -77,7 +77,7 @@ export default function Register() {
                 </form>
             </div>
             <div className="text-center mt-4">
-                <RouteButton route="login">
+                <RouteButton route="/login">
                     <p className="text-blue-600 hover:underline">Already have an account? Login here</p>
                 </RouteButton>
             </div>

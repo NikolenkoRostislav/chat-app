@@ -59,7 +59,7 @@ export default function Login() {
                 </form>
             </div>
             <div className="text-center mt-4">
-                <RouteButton route="register">
+                <RouteButton route="/register">
                     <p className="text-blue-600 hover:underline">Don't have an account? Register here</p>
                 </RouteButton>
             </div>
