@@ -13,15 +13,17 @@ type Props = {
     message: MessageType;
 };
 
+function insertZeroWidth(word: string, limit: number) {
+    for (let i = limit; i < word.length; i += limit) {
+        word =  word.slice(0, i) + "\u200B" + word.slice(i);
+    }
+    return word;
+}
+
 function breakLongWords(text: string, limit = 30) {
     return text
         .split(' ')
-        .map(word => {
-            if (word.length > limit) {
-                return word.replace(new RegExp(`(.{${limit}})`, 'g'), '$1\u200B'); // Insert zero-width space
-            }
-            return word;
-        })
+        .map(word => insertZeroWidth(word, limit))
         .join(' ');
 }
 
