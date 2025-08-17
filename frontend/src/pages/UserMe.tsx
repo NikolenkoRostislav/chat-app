@@ -35,6 +35,9 @@ export default function UserMe() {
                 <UserUpdateButton route="/user/update/username" field_name="username">
                     <p><strong>Username:</strong> {user.username}</p>
                 </UserUpdateButton>
+                <div className="p-2">
+                    <p><strong>User ID:</strong> {user.id}</p>  
+                </div>
             </main>
         </>
     );

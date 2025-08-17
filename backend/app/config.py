@@ -4,7 +4,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:5173"]
     APP_NAME: str = "SimpleChatApp"
-    DEBUG: bool = True
+    DEBUG: bool = False
     ALGORITHM: str
     DATABASE_URL: str
     SECRET_KEY: str
