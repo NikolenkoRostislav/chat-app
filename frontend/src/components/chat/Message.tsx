@@ -13,6 +13,18 @@ type Props = {
     message: MessageType;
 };
 
+function breakLongWords(text: string, limit = 30) {
+    return text
+        .split(' ')
+        .map(word => {
+            if (word.length > limit) {
+                return word.replace(new RegExp(`(.{${limit}})`, 'g'), '$1\u200B'); // Insert zero-width space
+            }
+            return word;
+        })
+        .join(' ');
+}
+
 export default function Message({ message }: Props) {
     return (
         <div className={`flex max-w-md mx-auto my-2 ${message.is_own_message ? "justify-end" : "justify-start"}`}>
@@ -36,7 +48,7 @@ export default function Message({ message }: Props) {
                             {message.sent_at.toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                         </time>
                     </div>
-                    <p className="mt-1 text-gray-700 whitespace-pre-wrap break-all">{message.content}</p>
+                    <p className="mt-1 text-gray-700 whitespace-pre-wrap break-words">{breakLongWords(message.content)}</p>
                 </div>
             </div>
         </div>

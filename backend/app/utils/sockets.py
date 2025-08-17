@@ -1,3 +1,4 @@
+"""
 import socketio
 from app.schemas import MessageSend, ChatMemberCreate
 from app.services import MessageService, UserService, ChatMemberService
@@ -96,5 +97,5 @@ async def disconnect(sid):
     user = connected_users.pop(sid, None)
     if user:
         print(f"User {user.username} disconnected")
-
+"""
 # I'll use sockets in frontend in the next version
