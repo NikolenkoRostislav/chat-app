@@ -1,9 +1,13 @@
+import { useState } from "react";
 import useAuthFetch from "../hooks/useAuthFetch";
 import ChatButton from '../components/home/ChatButton';
 import UserInfoButton from '../components/home/UserInfoButton';
+import ChatCreateButton from '../components/home/ChatCreateButton';
+import ChatCreateMenu from '../components/home/ChatCreateMenu';
 import type { ChatButtonType } from '../components/home/ChatButton';
 
 export default function Home() {
+    const [chatCreationMenuOpen, setChatCreationMenuOpen] = useState(false);
     const { data: chats_data, loading, error } = useAuthFetch("/chat-member/chats/me");
     if (loading) return <p className="text-center text-gray-500 mt-6">Loading...</p>;
     if (error) return <p className="text-center text-gray-500 mt-6">Error: {error}</p>;
@@ -29,7 +33,9 @@ export default function Home() {
                         chat_icon_url: chat.chat_icon_url,
                         last_message: chat.last_message
                     }}/> ))}
+                    <ChatCreateButton setChatCreationMenuOpen={setChatCreationMenuOpen}/>
                 </div>
+                {chatCreationMenuOpen && <ChatCreateMenu setChatCreationMenuOpen={setChatCreationMenuOpen} />}
             </main>
         </>
     );

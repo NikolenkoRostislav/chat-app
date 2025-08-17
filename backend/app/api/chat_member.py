@@ -32,7 +32,6 @@ async def get_chat_member_count(chat_id: int, db: AsyncSession = Depends(get_db)
 @router.get("/chats/me", response_model=list[ChatRead])
 @handle_exceptions
 async def get_chats_me(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
-    print("API /chats/me hit by user:", current_user.id)
     return await ChatMemberService.get_chats_by_current_user(db, current_user)
 
 @router.delete("/remove-member")

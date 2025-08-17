@@ -9,7 +9,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const payload = { username, password };
@@ -28,7 +28,7 @@ export default function Login() {
             <div className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
                 <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <form onSubmit={onSubmit} className="flex flex-col gap-4">
                     <label>
                         Username:
                         <input

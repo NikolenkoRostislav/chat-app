@@ -10,7 +10,7 @@ export default function Register() {
     const navigate = useNavigate();
     const { post, loading } = usePost();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const payload = {
@@ -34,7 +34,7 @@ export default function Register() {
             <div className="max-w-md mx-auto mt-20 p-6 border rounded shadow">
                 <h1 className="text-2xl font-bold mb-6 text-center">Register</h1>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <form onSubmit={onSubmit} className="flex flex-col gap-4">
                     <label>
                         Email:
                         <input

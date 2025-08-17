@@ -1,5 +1,5 @@
 import useAuthPost from "../../hooks/useAuthPost";
-import add_user_icon from "../../assets/add-user.png";
+import add_user_icon from "../../assets/add-icon.png";
 
 type Props = {
     chat_id: string;
