@@ -56,7 +56,7 @@ async def update_username(new_username: UserUpdateUsername, user: User = Depends
 async def update_email(new_email: UserUpdateEmail, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     return await UserService.update_email(user, new_email.email, db)
 
-@router.patch("/update/last_online", response_model=UserReadPublic)
+@router.patch("/update/last-online", response_model=UserReadPublic)
 @handle_exceptions
 async def update_last_online(user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     return await UserService.update_last_online(user, db)
