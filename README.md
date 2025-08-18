@@ -19,7 +19,7 @@ This project was made as part of my learning process for fullstack development, 
 
 - JWT-based authentication
 - Join create and view chats
-- Add users to chat
+- Add and remove chat members
 - Send and read messages
 - Update your profile data
 - Clean, modular frontend structure using Vite + React Router
