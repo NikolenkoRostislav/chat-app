@@ -1,14 +1,25 @@
 # Chat App
 
-A simple fullstack chat app where users can log in and chat in different rooms. Built with React + TypeScript on the frontend, and Python + SQL on the backend
+## Contents
+[Intro](#Introduction)
+[Features](#Features)
+[Tech Stack](#Tech-Stack)
+[Contact](#Contact)
+
+## Introduction
+
+Chat App is a simple messaging web app built with Python (FastAPI + SQLAlchemy) for the backend and React + TypeScript for the frontend.
+It allows users to create accounts, join chats, and send messages in a clean and user-friendly interface.
+
+This project was made as part of my learning process for fullstack development, focusing on authentication, database relations, and frontend–backend communication. Future versions may include features like sockets for live updates and improved chatroom management.
 
 ---
 
 ## Features
 
 - JWT-based authentication
-- Join create and view chat rooms
-- Add and remove users to chat, modify their permissions
+- Join create and view chats
+- Add users to chat
 - Send and read messages
 - Update your profile data
 - Clean, modular frontend structure using Vite + React Router
@@ -29,3 +40,11 @@ A simple fullstack chat app where users can log in and chat in different rooms. 
 - SQLite
 
 ---
+
+## Contact
+
+You can contact me via:
+Work Email: rostislavnikolenkowork@gmail.com
+Personal Email: rostislav160307@gmail.com
+LinkedIn: linkedin.com/in/rostyslav-nikolenko-58b069348
+Telegram: @RSlavNV
