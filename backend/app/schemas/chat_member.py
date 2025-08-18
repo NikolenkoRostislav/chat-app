@@ -13,3 +13,6 @@ class ChatMemberRead(ChatMemberBase):
 
 class ChatMemberCreate(ChatMemberBase):
     pass
+
+class ChatMemberDelete(ChatMemberBase):
+    pass

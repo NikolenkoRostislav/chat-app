@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
-from app.schemas import ChatMemberCreate, ChatMemberRead, ChatRead
+from app.schemas import ChatMemberCreate, ChatMemberDelete, ChatMemberRead, ChatRead
 from app.services import ChatMemberService
 from app.models import Chat, User, ChatMember
 from app.utils.auth import get_current_user
@@ -36,8 +36,8 @@ async def get_chats_me(db: AsyncSession = Depends(get_db), current_user: User = 
 
 @router.delete("/remove-member")
 @handle_exceptions
-async def remove_member(user_id: int, chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return await ChatMemberService.remove_member(user_id, chat_id, db, current_user)
+async def remove_member(chat_member_data: ChatMemberDelete, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await ChatMemberService.remove_member(chat_member_data, db, current_user)
 
 @router.patch("/update-member-status/{chat_member_id}", response_model=ChatMemberRead)
 @handle_exceptions

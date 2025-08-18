@@ -48,6 +48,7 @@ export default function ChatInfo() {
                             member={{
                                 member_id: member.member_id,
                                 user_id: member.user_id,
+                                chat_id: chat_id,
                             }}
                         />
                     ))}
