@@ -7,6 +7,7 @@ export type ChatMemberType = {
     member_id: string;
     user_id: string;
     chat_id: string;
+    show_delete_button: boolean;  
 };
 
 type Props = {
@@ -50,9 +51,13 @@ export default function ChatMember({ member }: Props) {
                     className="w-12 h-12 rounded-full object-cover"
                 />
                 <h2 className="font-semibold text-gray-900">{user_data.username}</h2>
-                <button onClick={onRemove} className="ml-auto w-8 h-8 rounded-full object-cover border border-gray-300 cursor-pointer hover:bg-gray-200">
+                {member.show_delete_button && <button 
+                    onClick={onRemove} 
+                    className="ml-auto w-8 h-8 rounded-full object-cover border border-gray-300 cursor-pointer hover:bg-gray-200"
+                >
                     <strong>X</strong>
                 </button>
+                }
                 {/*member_data.is_admin && <span className="text-sm text-blue-500">Admin</span>*/}
             </div>
         </RouteButton>

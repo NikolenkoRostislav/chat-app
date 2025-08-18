@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useAuthFetch from '../hooks/useAuthFetch';
+import useCurrentUserID from '../hooks/useCurrentUserID';
 import HomeButton from '../components/HomeButton';
 import ChatMember from '../components/chat_info/ChatMember';
 import ChatMemberButton from '../components/chat_info/ChatMemberButton';
@@ -11,8 +13,16 @@ export default function ChatInfo() {
 
     if (!chat_id) return <p className="text-center mt-10">No chat id provided.</p>;
 
+    const { id: current_user_id } = useCurrentUserID();
     const { data: chat, loading, error: chat_error } = useAuthFetch(`/chat/${chat_id}`);
     const { data: member_data, error: member_error } = useAuthFetch(`/chat-member/user-memberships/${chat_id}`);
+    const [is_creator, setIsCreator] = useState(false);
+
+    useEffect(() => {
+        if (chat) {
+            setIsCreator(current_user_id === chat.creator_id);
+        }
+    }, [chat, current_user_id]);
 
     if (loading) return <p className="text-center mt-10">Loading chat data...</p>;
     if (chat_error || member_error) return <p>Error: {chat_error || member_error}</p>;
@@ -49,11 +59,12 @@ export default function ChatInfo() {
                                 member_id: member.member_id,
                                 user_id: member.user_id,
                                 chat_id: chat_id,
+                                show_delete_button: is_creator,
                             }}
                         />
                     ))}
                 </div>
-                <ChatMemberButton chat_id={chat_id} />
+                {is_creator && <ChatMemberButton chat_id={chat_id} />}
             </main>
         </>
     );

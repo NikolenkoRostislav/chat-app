@@ -12,6 +12,10 @@ type Props = {
 };
 
 export default function ChatNav({chat_name, chat_pfp, /*is_group,*/ member_count, chat_id}: Props) {
+    const onClick = async () => {
+        alert("Placeholder");
+    }
+
     return (
         <nav className="flex items-center gap-4 px-4 py-2 bg-white shadow-sm border-b sticky top-0 z-10">
             <HomeButton />
@@ -30,6 +34,12 @@ export default function ChatNav({chat_name, chat_pfp, /*is_group,*/ member_count
             <h1>{chat_name}</h1>
             {/*is_group ? <p className="text-sm text-gray-500">{member_count} members</p> : <ActivityIndicator activity="online"/>*/}
             <p className="text-sm text-gray-500">{member_count} members</p>
+            <button 
+                onClick={onClick}
+                className="ml-auto text-red-500 cursor-pointer"
+            > 
+                Leave Chat
+            </button>
         </nav>
     );
 }

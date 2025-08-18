@@ -12,7 +12,7 @@ export default function Chat() {
     const { data: message_data, loading, error } = useAuthFetch(`/message/chat-messages/full-info/${chat_id}`);
     const { data: chat_data } = useAuthFetch(`/chat/${chat_id}`);
     const { data: chat_member_data } = useAuthFetch(`/chat-member/user-memberships-count/${chat_id}`);
-    const { id: currentUserId } = useCurrentUserID();
+    const { id: current_user_id } = useCurrentUserID();
     
     if (error) return <p>Error: {error}</p>;
     if (loading || !chat_data || !chat_member_data || !chat_id) return <p>Loading...</p>;
@@ -22,7 +22,7 @@ export default function Chat() {
         sender_pfp: m.user.pfp_url,
         content: m.content,
         sent_at: new Date(m.sent_at),
-        is_own_message: m.sender_id == currentUserId,
+        is_own_message: m.sender_id == current_user_id,
     }));
 
     return (

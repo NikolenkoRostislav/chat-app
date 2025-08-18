@@ -39,7 +39,13 @@ export default function UserInfo() {
                 <div>
                     <strong>Last online: </strong> 
                     <time dateTime={lastOnlineDate.toISOString()}>
-                        {lastOnlineDate.toLocaleString()}
+                        {lastOnlineDate.toLocaleString(undefined, {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        })}
                     </time>
                 </div>
             </main>
