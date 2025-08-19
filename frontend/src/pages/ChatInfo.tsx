@@ -24,7 +24,7 @@ export default function ChatInfo() {
         }
     }, [chat, current_user_id]);
 
-    const members: ChatMemberType[] = useMemo(() => (member_data ?? []).map((m: any) => ({
+    const members: ChatMemberType[] = useMemo(() => (member_data || []).map((m: any) => ({
         member_id: m.id,
         user_id: m.user_id,
     })), [member_data]);

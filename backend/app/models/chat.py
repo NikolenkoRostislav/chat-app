@@ -6,9 +6,9 @@ class Chat(Base):
     __tablename__ = "chats"
 
     id = Column(Integer, primary_key=True, index=True)
-    creator_id = Column(Integer, ForeignKey("users.id"), index=True)
+    creator_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), index=True)
     name = Column(String, index=True)
     icon_url = Column(String)
 
-    messages = relationship("Message", back_populates="chat")
-    members = relationship("ChatMember", back_populates="chat")
+    messages = relationship("Message", back_populates="chat", cascade="all, delete-orphan", lazy="selectin")
+    members = relationship("ChatMember", back_populates="chat", cascade="all, delete-orphan", lazy="selectin")

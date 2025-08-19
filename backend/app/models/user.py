@@ -14,4 +14,4 @@ class User(Base):
     last_online = Column(DateTime, default=datetime.utcnow)
 
     messages_sent = relationship("Message", back_populates="sender")
-    chat_memberships = relationship("ChatMember", back_populates="user")
+    chat_memberships = relationship("ChatMember", back_populates="user", lazy="selectin")

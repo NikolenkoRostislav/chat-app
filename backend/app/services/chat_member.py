@@ -54,8 +54,8 @@ class ChatMemberService:
         user = await UserService.get_user_by_id(user_id, db, True)
         if current_user.id != user_id:
             raise PermissionDeniedError("You lack permission to view this user's chats")
-        result = await db.execute(select(ChatMember).where(ChatMember.user_id == user_id))
-        return result.scalars().all()
+        await db.refresh(user)
+        return user.chat_memberships
 
     @staticmethod
     async def get_chats_by_current_user(db: AsyncSession, current_user: User) -> list[Chat]:
