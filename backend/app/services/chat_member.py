@@ -87,12 +87,15 @@ class ChatMemberService:
     async def remove_member(chat_member_data: ChatMemberDelete, db: AsyncSession, current_user: User):
         user = await UserService.get_user_by_id(chat_member_data.user_id, db)
         chat = await ChatService.get_chat_by_id(chat_member_data.chat_id, db)
-        current_user_is_admin = await ChatMemberService.check_admin_status(current_user.id, chat_member_data.chat_id, db)
-        user_to_delete_is_admin = await ChatMemberService.check_admin_status(chat_member_data.user_id, chat_member_data.chat_id, db)
-        if user_to_delete_is_admin and current_user.id != chat.creator_id:
-            raise PermissionDeniedError("You cannot remove an admin from the chat unless you are the creator")
-        if current_user.id != chat.creator_id and not current_user_is_admin:
-            raise PermissionDeniedError("You lack permission to remove this user from the chat")
+        if current_user.id != user.id:
+            current_user_is_admin = await ChatMemberService.check_admin_status(current_user.id, chat_member_data.chat_id, db)
+            user_to_delete_is_admin = await ChatMemberService.check_admin_status(chat_member_data.user_id, chat_member_data.chat_id, db)
+            if user_to_delete_is_admin and current_user.id != chat.creator_id:
+                raise PermissionDeniedError("You cannot remove an admin from the chat unless you are the creator")
+            if current_user.id != chat.creator_id and not current_user_is_admin:
+                raise PermissionDeniedError("You lack permission to remove this user from the chat")
+        if chat_member_data.user_id == chat.creator_id:
+            raise PermissionDeniedError("Chat creator cannot be removed from the chat")
         if not await ChatMemberService.check_user_membership(chat_member_data.user_id, chat_member_data.chat_id, db):
             raise InvalidEntryError("User is not a member of this chat")
         chat_member = await ChatMemberService.get_chat_member_by_user_and_chat_id(chat_member_data.user_id, chat_member_data.chat_id, db, True)

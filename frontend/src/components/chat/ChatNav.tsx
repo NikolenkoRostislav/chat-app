@@ -1,4 +1,7 @@
 /*import ActivityIndicator from "./ActivityIndicator";*/
+import useAuthDelete from "../../hooks/useAuthDelete";
+import useCurrentUserID from "../../hooks/useCurrentUserID";
+import { useNavigate } from "react-router-dom";
 import HomeButton from "../HomeButton";
 import RouteButton from "../RouteButton";
 import default_chat from '../../assets/default-chat.png';
@@ -12,8 +15,22 @@ type Props = {
 };
 
 export default function ChatNav({chat_name, chat_pfp, /*is_group,*/ member_count, chat_id}: Props) {
+    const navigate = useNavigate();
+    const { delete_func } = useAuthDelete();
+    const { id: user_id } = useCurrentUserID();
+
     const onClick = async () => {
-        alert("Placeholder");
+        const payload = { 
+            chat_id,
+            user_id,
+        };
+
+        try {
+            await delete_func("/chat-member/remove-member", payload);
+            navigate("/")
+        } catch (err) {   
+            alert("Failed to leave chat: " + err);
+        }
     }
 
     return (
