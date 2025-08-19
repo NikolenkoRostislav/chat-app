@@ -4,6 +4,7 @@ import RouteButton from '../RouteButton';
 import default_pfp from '../../assets/default-pfp.png';
 
 export type ChatMemberType = {
+    refresh: () => void;
     member_id: string;
     user_id: string;
     chat_id: string;
@@ -29,6 +30,7 @@ export default function ChatMember({ member }: Props) {
 
         try {
             await delete_func(`/chat-member/remove-member`, payload);
+            member.refresh();
         } catch (err) {
             alert("Failed to remove member: " + err);
         }

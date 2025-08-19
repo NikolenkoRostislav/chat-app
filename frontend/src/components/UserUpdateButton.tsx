@@ -2,12 +2,13 @@ import type { ReactNode } from "react";
 import useAuthPatch from "../hooks/useAuthPatch";
 
 type Props = {
+    refresh: () => void;
     route: string;
     field_name: string;
     children: ReactNode;
 };
 
-export default function UserUpdateButton({ route, field_name, children }: Props) {
+export default function UserUpdateButton({ route, field_name, children, refresh }: Props) {
     const { patch, loading } = useAuthPatch();
 
     const handleClick = async () => {
@@ -21,6 +22,7 @@ export default function UserUpdateButton({ route, field_name, children }: Props)
         };
         try {
             await patch(route, payload);
+            refresh();
         } catch (err) {
             alert(`Failed to update: ${err}`);
         }

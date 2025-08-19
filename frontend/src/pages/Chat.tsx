@@ -28,10 +28,10 @@ export default function Chat() {
     return (
         <div className="flex flex-col h-screen">  
             <ChatNav
-                chat_id ={chat_id}
+                chat_id={chat_id}
+                creator_id={chat_data.creator_id}
                 chat_name={chat_data.name}
                 chat_pfp={chat_data.icon_url}
-                is_group={false}
                 member_count={chat_member_data}
             />
             <main className="flex-1 flex flex-col max-w-3xl mx-auto p-4">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import useAuthFetch from '../hooks/useAuthFetch';
 import useCurrentUserID from '../hooks/useCurrentUserID';
@@ -15,7 +15,7 @@ export default function ChatInfo() {
 
     const { id: current_user_id } = useCurrentUserID();
     const { data: chat, loading, error: chat_error } = useAuthFetch(`/chat/${chat_id}`);
-    const { data: member_data, error: member_error } = useAuthFetch(`/chat-member/user-memberships/${chat_id}`);
+    const { data: member_data, error: member_error, refetch } = useAuthFetch(`/chat-member/user-memberships/${chat_id}`);
     const [is_creator, setIsCreator] = useState(false);
 
     useEffect(() => {
@@ -24,14 +24,15 @@ export default function ChatInfo() {
         }
     }, [chat, current_user_id]);
 
+    const members: ChatMemberType[] = useMemo(() => (member_data ?? []).map((m: any) => ({
+        member_id: m.id,
+        user_id: m.user_id,
+    })), [member_data]);
+
     if (loading) return <p className="text-center mt-10">Loading chat data...</p>;
     if (chat_error || member_error) return <p>Error: {chat_error || member_error}</p>;
     if (!chat) return <p>Chat not found.</p>;
 
-    const members: ChatMemberType[] = (member_data ?? []).map((m: any) => ({
-        member_id: m.id,
-        user_id: m.user_id,
-    }));
 
     return (
         <>
@@ -56,6 +57,7 @@ export default function ChatInfo() {
                         <ChatMember
                             key={index}
                             member={{
+                                refresh: refetch,
                                 member_id: member.member_id,
                                 user_id: member.user_id,
                                 chat_id: chat_id,
