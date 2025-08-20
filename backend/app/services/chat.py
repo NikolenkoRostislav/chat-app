@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models import Chat, User
 from app.schemas import ChatCreate
-from app.utils.exceptions import NotFoundError
+from app.utils.exceptions import *
 
 class ChatService:
     @staticmethod

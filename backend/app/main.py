@@ -7,7 +7,7 @@ from app.db import engine, Base
 from app.middleware.logging import setup_logging
 from app.models import *
 from app.api import *
-from app.utils.exceptions import InvalidEntryError, NotFoundError, PermissionDeniedError, AlreadyExistsError
+from app.utils.exceptions import *
 #from app.utils.sockets import sio
 
 app = FastAPI()

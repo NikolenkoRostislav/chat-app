@@ -16,7 +16,6 @@ class NotFoundError(AppError):
 class AlreadyExistsError(AppError):
     pass 
 
-
 def handle_exceptions(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):
@@ -33,3 +32,11 @@ def handle_exceptions(func):
         except Exception:
             raise HTTPException(status_code=500, detail="Something went wrong")
     return wrapper
+
+__all__ = [
+    "AppError",
+    "InvalidEntryError",
+    "PermissionDeniedError",
+    "NotFoundError",
+    "AlreadyExistsError"
+]

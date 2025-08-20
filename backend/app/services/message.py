@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models import User, Message
 from app.schemas import MessageSend, UserReadPublic
-from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyExistsError, InvalidEntryError
+from app.utils.exceptions import *
 from app.utils.membership import MembershipUtils
 
 class MessageService:

@@ -4,7 +4,7 @@ from datetime import datetime
 from app.models import User
 from app.schemas import UserCreate
 from app.utils.auth import create_access_token, authenticate_user
-from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyExistsError, InvalidEntryError
+from app.utils.exceptions import *
 from app.utils.security import get_password_hash, verify_password
 
 async def _get_user_by_field(field_name: str, value, db: AsyncSession, strict: bool) -> User | None:

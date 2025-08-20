@@ -5,7 +5,7 @@ from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.db import get_db
-from app.utils.exceptions import InvalidEntryError
+from app.utils.exceptions import *
 from app.models import User
 from app.utils.security import verify_password
 
