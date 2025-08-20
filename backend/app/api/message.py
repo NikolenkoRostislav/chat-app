@@ -14,20 +14,15 @@ router = APIRouter(prefix="/message", tags=["message"])
 async def send_message(message_data: MessageSend, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     return await MessageService.send_message(message_data, db, current_user)
 
-@router.get("/chat/{chat_id}/user-messages/{user_id}", response_model=list[MessageRead])
-@handle_exceptions
-async def get_user_messages_in_chat(chat_id: int, user_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return await MessageService.get_user_messages_in_chat(chat_id, user_id, db, current_user)
-
-@router.get("/chat-messages/{chat_id}", response_model=list[MessageRead])
-@handle_exceptions
-async def get_chat_messages(chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return await MessageService.get_chat_messages(chat_id, db, current_user)
-
-@router.get("/chat-messages/full-info/{chat_id}")
+@router.get("/chat/{chat_id}")
 @handle_exceptions
 async def get_chat_messages(chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     return await MessageService.get_chat_messages_full(chat_id, db, current_user)
+
+#@router.get("/chat/{chat_id}/user-messages/{user_id}", response_model=list[MessageRead])
+#@handle_exceptions
+#async def get_user_messages_in_chat(chat_id: int, user_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+#    return await MessageService.get_user_messages_in_chat(chat_id, user_id, db, current_user)
 
 @router.delete("/{message_id}")
 @handle_exceptions

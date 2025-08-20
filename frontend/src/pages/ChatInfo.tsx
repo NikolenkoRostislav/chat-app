@@ -15,7 +15,7 @@ export default function ChatInfo() {
 
     const { id: current_user_id } = useCurrentUserID();
     const { data: chat, loading, error: chat_error } = useAuthFetch(`/chat/${chat_id}`);
-    const { data: member_data, error: member_error, refetch } = useAuthFetch(`/chat-member/user-memberships/${chat_id}`);
+    const { data: member_data, error: member_error, refetch } = useAuthFetch(`/chat/members/${chat_id}`);
     const [is_creator, setIsCreator] = useState(false);
 
     useEffect(() => {

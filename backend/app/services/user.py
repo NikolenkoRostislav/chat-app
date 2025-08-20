@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import datetime
-from app.models import User
+from app.models import User, Chat
 from app.schemas import UserCreate
 from app.utils.auth import create_access_token, authenticate_user
 from app.utils.exceptions import *
@@ -60,6 +60,16 @@ class UserService:
     @staticmethod
     async def get_user_by_id(id: str, db: AsyncSession, strict: bool = False) -> User | None:
         return await _get_user_by_field('id', id, db, strict)
+
+    @staticmethod
+    async def get_chats_by_current_user(db: AsyncSession, current_user: User) -> list[Chat]:
+        await db.refresh(current_user)
+        chat_members = current_user.chat_memberships
+        chat_ids = [member.chat_id for member in chat_members]
+        if chat_ids is None:
+            return []
+        result = await db.execute(select(Chat).where(Chat.id.in_(chat_ids)))
+        return result.scalars().all()
 
     @staticmethod
     async def update_password(user: User, new_password: str, db: AsyncSession) -> User | None:

@@ -5,6 +5,12 @@ from app.schemas import MessageSend, UserReadPublic
 from app.utils.exceptions import *
 from app.utils.membership import MembershipUtils
 
+async def _get_chat_messages(chat_id: int, db: AsyncSession, current_user: User) -> list[Message]:
+    if not await MembershipUtils.check_user_membership(current_user.id, chat_id, db):
+        raise PermissionDeniedError("You are not a member of this chat")
+    result = await db.execute(select(Message).where(Message.chat_id == chat_id))
+    return result.scalars().all()
+
 class MessageService:
     @staticmethod
     async def send_message(message_data: MessageSend, db: AsyncSession, current_user: User) -> Message:
@@ -45,16 +51,10 @@ class MessageService:
         result = await db.execute(select(Message).where(Message.chat_id == chat_id, Message.sender_id == user_id))
         return result.scalars().all()
 
-    @staticmethod
-    async def get_chat_messages(chat_id: int, db: AsyncSession, current_user: User) -> list[Message]:
-        if not await MembershipUtils.check_user_membership(current_user.id, chat_id, db):
-            raise PermissionDeniedError("You are not a member of this chat")
-        result = await db.execute(select(Message).where(Message.chat_id == chat_id))
-        return result.scalars().all()
 
     @staticmethod
     async def get_chat_messages_full(chat_id: int, db: AsyncSession, current_user: User):
-        chat_messages = await MessageService.get_chat_messages(chat_id, db, current_user)
+        chat_messages = await _get_chat_messages(chat_id, db, current_user)
         full_messages = []
         for message in chat_messages:
             full_messages.append({

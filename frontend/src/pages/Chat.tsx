@@ -9,9 +9,9 @@ import MessageButton from '../components/chat/MessageButton';
 export default function Chat() {
     const { chat_id } = useParams<{ chat_id: string }>();
     
-    const { data: message_data, loading, error } = useAuthFetch(`/message/chat-messages/full-info/${chat_id}`);
+    const { data: message_data, loading, error } = useAuthFetch(`/message/chat/${chat_id}`);
     const { data: chat_data } = useAuthFetch(`/chat/${chat_id}`);
-    const { data: chat_member_data } = useAuthFetch(`/chat-member/user-memberships-count/${chat_id}`);
+    const { data: chat_member_data } = useAuthFetch(`/chat/member-count/${chat_id}`);
     const { id: current_user_id } = useCurrentUserID();
     
     if (error) return <p>Error: {error}</p>;

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_db
-from app.schemas import UserCreate, UserUpdateEmail, UserUpdatePassword, UserUpdateUsername, UserUpdatePFP, UserReadPrivate, UserReadPublic, UserLogin, Token
+from app.schemas import UserCreate, UserUpdateEmail, UserUpdatePassword, UserUpdateUsername, UserUpdatePFP, UserReadPrivate, UserReadPublic, UserLogin, Token, ChatRead
 from app.services import UserService
 from app.utils.auth import get_current_user
 from app.utils.exceptions import handle_exceptions
@@ -26,25 +26,30 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 async def read_self(user: User = Depends(get_current_user)):
     return user
 
-@router.get("/id/{user_id}", response_model=UserReadPublic)
+@router.get("/chats/me", response_model=list[ChatRead])
 @handle_exceptions
-async def read_user(user_id: str, db: AsyncSession = Depends(get_db)):
-    return await UserService.get_user_by_id(int(user_id), db, True)
+async def get_chats_me(db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await UserService.get_chats_by_current_user(db, current_user)
 
 @router.get("/{username}", response_model=UserReadPublic)
 @handle_exceptions
 async def read_user(username: str, db: AsyncSession = Depends(get_db)):
     return await UserService.get_user_by_username(username, db, True)
 
+@router.get("/id/{user_id}", response_model=UserReadPublic)
+@handle_exceptions
+async def read_user(user_id: str, db: AsyncSession = Depends(get_db)):
+    return await UserService.get_user_by_id(int(user_id), db, True)
+
 @router.patch("/update/pfp", response_model=UserReadPublic)
 @handle_exceptions
 async def update_pfp(new_pfp: UserUpdatePFP, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     return await UserService.update_pfp(user, new_pfp.pfp_url, db)
 
-@router.patch("/update/password", response_model=UserReadPublic)
-@handle_exceptions
-async def update_password(new_password: UserUpdatePassword, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    return await UserService.update_password(user, new_password.password, db)
+#@router.patch("/update/password", response_model=UserReadPublic)
+#@handle_exceptions
+#async def update_password(new_password: UserUpdatePassword, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+#    return await UserService.update_password(user, new_password.password, db)
 
 @router.patch("/update/username", response_model=UserReadPublic)
 @handle_exceptions

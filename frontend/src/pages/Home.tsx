@@ -8,7 +8,7 @@ import type { ChatButtonType } from '../components/home/ChatButton';
 
 export default function Home() {
     const [chatCreationMenuOpen, setChatCreationMenuOpen] = useState(false);
-    const { data: chats_data, loading, error } = useAuthFetch("/chat-member/chats/me");
+    const { data: chats_data, loading, error } = useAuthFetch("/user/chats/me");
     if (loading) return <p className="text-center text-gray-500 mt-6">Loading...</p>;
     if (error) return <p className="text-center text-gray-500 mt-6">Error: {error}</p>;
 

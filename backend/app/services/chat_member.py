@@ -16,36 +16,6 @@ class ChatMemberService:
         return chat_member
 
     @staticmethod
-    async def get_chat_members_by_chat_id(chat_id: int, db: AsyncSession, current_user: User) -> list[ChatMember]:
-        chat = await ChatService.get_chat_by_id(chat_id, db, True)
-        if not await MembershipUtils.check_user_membership(current_user.id, chat_id, db) and chat.creator_id != current_user.id:
-            raise PermissionDeniedError("You lack permission to view this chat's members")
-        await db.refresh(chat)
-        return chat.members
-
-    @staticmethod
-    async def get_chat_members_by_user_id(user_id: int, db: AsyncSession, current_user: User) -> list[ChatMember]:
-        user = await UserService.get_user_by_id(user_id, db, True)
-        if current_user.id != user_id:
-            raise PermissionDeniedError("You lack permission to view this user's chats")
-        await db.refresh(user)
-        return user.chat_memberships
-
-    @staticmethod
-    async def get_chats_by_current_user(db: AsyncSession, current_user: User) -> list[Chat]:
-        chat_members = await ChatMemberService.get_chat_members_by_user_id(current_user.id, db, current_user)
-        chat_ids = [member.chat_id for member in chat_members]
-        if chat_ids is None:
-            return []
-        result = await db.execute(select(Chat).where(Chat.id.in_(chat_ids)))
-        return result.scalars().all()
-
-    @staticmethod
-    async def get_chat_member_count(chat_id: int, db: AsyncSession, current_user: User) -> int:
-        chat_members = await ChatMemberService.get_chat_members_by_chat_id(chat_id, db, current_user)
-        return len(chat_members)
-
-    @staticmethod
     async def add_user_to_chat(chat_member_data: ChatMemberCreate, db: AsyncSession, current_user: User) -> ChatMember:
         chat = await ChatService.get_chat_by_id(chat_member_data.chat_id, db, True)
         user = await UserService.get_user_by_id(chat_member_data.user_id, db, True)
