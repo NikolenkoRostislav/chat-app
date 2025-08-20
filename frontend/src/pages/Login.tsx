@@ -2,12 +2,22 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import usePost from "../hooks/usePost";
 import RouteButton from "../components/RouteButton";
+import { socket } from "../socket";
 
 export default function Login() {
     const { loading, post } = usePost();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+
+    const sockets_connect = async (token: string) => {
+        socket.connect();
+        socket.on("connect", () => {
+            console.log("connected");
+            socket.emit("identify_user", { token: token });
+            socket.emit("connect_user_to_chat")
+        });
+    }
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -17,6 +27,7 @@ export default function Login() {
         try {
             const result = await post(`/user/auth/login`, payload, true);
             localStorage.setItem("token", result.access_token);
+            await sockets_connect(result.access_token);
             navigate("/");
         } catch (err) { 
             alert("Login failed: " + err);

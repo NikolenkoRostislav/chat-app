@@ -1,14 +1,14 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-#import socketio
+import socketio
 from app.config import settings
 from app.db import engine, Base
 from app.middleware.logging import setup_logging
 from app.models import *
 from app.api import *
 from app.utils.exceptions import *
-#from app.utils.sockets import sio
+from app.utils.sockets import sio
 
 app = FastAPI()
 app.include_router(user_router)
@@ -44,7 +44,7 @@ app.add_middleware(
 
 setup_logging(app)
 
-#socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
+socket_app = socketio.ASGIApp(sio, other_asgi_app=app, socketio_path="ws/socket.io")
 
 @app.on_event("startup")
 async def on_startup():

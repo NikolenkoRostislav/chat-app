@@ -1,4 +1,3 @@
-"""
 import socketio
 from app.schemas import MessageSend, ChatMemberCreate
 from app.services import MessageService, UserService, ChatMemberService
@@ -27,15 +26,15 @@ async def identify_user(sid, data):
         return
 
     async with SessionLocal() as db:
-        user = UserService.get_user_by_id(user_id, db)
+        user = await UserService.get_user_by_id(user_id, db)
         if user is None:
             await sio.disconnect(sid)
-        return
+            return
     connected_users[sid] = user
     await sio.enter_room(sid, f"user:{user.id}")
     print(f"User {user.username} authenticated with sid {sid}")
 
-@sio.event 
+@sio.event #I'll merge  this with identify user into a login event soon
 async def connect_user_to_chat(sid, data):
     user = await _get_user_by_sid(sid)
     if user is None:
@@ -70,32 +69,8 @@ async def send_message(sid, data):
             room=f"chat:{message.chat_id}"
         )
 
-@sio.event 
-async def add_user_to_chat(sid, data):
-    async with SessionLocal() as db:
-        user = await _get_user_by_sid(sid)
-        if user is None:
-            return
-        try:
-            chat_member_data = ChatMemberCreate(**data)
-            chat_member = await ChatMemberService.add_user_to_chat(chat_member_data, db, user)
-        except Exception as e:
-            await sio.emit("error", {"error": str(e)}, room=sid)
-            return
-        await sio.emit(
-            "new_chat_member",
-            {
-                "chat_id": chat_member.chat_id,
-                "user_id": chat_member.user_id,
-                "is_admin": chat_member.is_admin,
-            },
-            room=f"chat:{chat_member.chat_id}"
-        )
-
 @sio.event
 async def disconnect(sid):
     user = connected_users.pop(sid, None)
     if user:
         print(f"User {user.username} disconnected")
-"""
-# I'll use sockets in frontend in the next version
