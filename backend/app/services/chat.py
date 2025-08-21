@@ -15,7 +15,6 @@ class ChatService:
         )
         db.add(chat)
         await db.commit()
-        await db.refresh(chat)
         return chat
 
     @staticmethod   
@@ -28,11 +27,14 @@ class ChatService:
 
     @staticmethod
     async def get_chat_members_by_chat_id(chat_id: int, db: AsyncSession, current_user: User) -> list[ChatMember]:
-        chat = await ChatService.get_chat_by_id(chat_id, db, True)
         if not await MembershipUtils.check_user_membership(current_user.id, chat_id, db) and chat.creator_id != current_user.id:
             raise PermissionDeniedError("You lack permission to view this chat's members")
-        await db.refresh(chat)
-        return chat.members
+        result = await db.scalars(
+            select(ChatMember)
+            .join(ChatMember.chat)
+            .where(chat_id == Chat.id)
+        )
+        return result.all()
 
     @staticmethod
     async def get_chat_member_count(chat_id: int, db: AsyncSession, current_user: User) -> int:

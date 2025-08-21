@@ -10,5 +10,5 @@ class Chat(Base):
     name = Column(String, index=True)
     icon_url = Column(String)
 
-    messages = relationship("Message", back_populates="chat", cascade="all, delete-orphan", lazy="selectin")
-    members = relationship("ChatMember", back_populates="chat", cascade="all, delete-orphan", lazy="selectin")
+    messages = relationship("Message", back_populates="chat", cascade="all, delete-orphan")
+    members = relationship("ChatMember", back_populates="chat", cascade="all, delete-orphan")

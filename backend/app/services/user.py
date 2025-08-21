@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 from datetime import datetime
-from app.models import User, Chat
+from app.models import User, Chat, ChatMember
 from app.schemas import UserCreate
 from app.utils.auth import create_access_token, authenticate_user
 from app.utils.exceptions import *
@@ -9,8 +10,8 @@ from app.utils.security import get_password_hash, verify_password
 
 async def _get_user_by_field(field_name: str, value, db: AsyncSession, strict: bool) -> User | None:
     field = getattr(User, field_name)
-    result = await db.execute(select(User).where(field == value))
-    user = result.scalar_one_or_none()
+    result = await db.scalars(select(User).where(field == value))
+    user = result.one_or_none()
     if strict and user is None:
         raise NotFoundError(f"User with {field_name} '{value}' not found")
     return user
@@ -18,7 +19,6 @@ async def _get_user_by_field(field_name: str, value, db: AsyncSession, strict: b
 async def _update_field(user: User, field_name: str, value, db: AsyncSession) -> User | None:
     setattr(user, field_name, value)
     await db.commit()
-    await db.refresh(user)
     return user
 
 class UserService:
@@ -39,7 +39,6 @@ class UserService:
         )
         db.add(user)
         await db.commit()
-        await db.refresh(user)
         return user
 
     @staticmethod
@@ -63,13 +62,13 @@ class UserService:
 
     @staticmethod
     async def get_chats_by_current_user(db: AsyncSession, current_user: User) -> list[Chat]:
-        await db.refresh(current_user)
-        chat_members = current_user.chat_memberships
-        chat_ids = [member.chat_id for member in chat_members]
-        if chat_ids is None:
-            return []
-        result = await db.execute(select(Chat).where(Chat.id.in_(chat_ids)))
-        return result.scalars().all()
+        result = await db.scalars(
+            select(Chat)
+            .join(Chat.members)
+            .where(ChatMember.user_id == current_user.id)
+            .options(selectinload(Chat.members))
+        )
+        return result.all()
 
     @staticmethod
     async def update_password(user: User, new_password: str, db: AsyncSession) -> User | None:

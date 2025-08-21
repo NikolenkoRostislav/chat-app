@@ -6,8 +6,8 @@ from app.utils.exceptions import PermissionDeniedError, NotFoundError, AlreadyEx
 class MembershipUtils:
     @staticmethod
     async def get_chat_member_by_user_and_chat_id(user_id: int, chat_id: int, db: AsyncSession, strict: bool = False) -> ChatMember | None:
-        result = await db.execute(select(ChatMember).where(ChatMember.user_id == user_id, ChatMember.chat_id == chat_id))
-        chat_member = result.scalar_one_or_none()
+        result = await db.scalars(select(ChatMember).where(ChatMember.user_id == user_id, ChatMember.chat_id == chat_id))
+        chat_member = result.one_or_none()
         if strict and chat_member is None:
             raise NotFoundError("Chat member not found")
         return chat_member
