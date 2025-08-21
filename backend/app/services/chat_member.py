@@ -9,8 +9,8 @@ from app.utils.membership import MembershipUtils
 class ChatMemberService:
     @staticmethod
     async def get_chat_member_by_id(chat_member_id: int, db: AsyncSession, strict: bool = False) -> ChatMember | None:
-        result = await db.execute(select(ChatMember).where(ChatMember.id == chat_member_id))
-        chat_member = result.scalar_one_or_none()
+        result = await db.scalars(select(ChatMember).where(ChatMember.id == chat_member_id))
+        chat_member = result.one_or_none()
         if strict and chat_member is None:
             raise NotFoundError("Chat member not found")
         return chat_member
@@ -29,7 +29,6 @@ class ChatMemberService:
         )
         db.add(chat_member)
         await db.commit()
-        await db.refresh(chat_member)
         return chat_member
 
     @staticmethod
@@ -59,7 +58,5 @@ class ChatMemberService:
         if current_user.id != chat.creator_id:
             raise PermissionDeniedError("You lack permission to update this chat member's admin status")
         setattr(chat_member, "is_admin", is_admin)
-        db.add(chat_member)
         await db.commit()
-        await db.refresh(chat_member)
         return chat_member

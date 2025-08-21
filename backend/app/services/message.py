@@ -8,8 +8,8 @@ from app.utils.membership import MembershipUtils
 async def _get_chat_messages(chat_id: int, db: AsyncSession, current_user: User) -> list[Message]:
     if not await MembershipUtils.check_user_membership(current_user.id, chat_id, db):
         raise PermissionDeniedError("You are not a member of this chat")
-    result = await db.execute(select(Message).where(Message.chat_id == chat_id))
-    return result.scalars().all()
+    result = await db.scalars(select(Message).where(Message.chat_id == chat_id))
+    return result.all()
 
 class MessageService:
     @staticmethod
@@ -23,13 +23,12 @@ class MessageService:
         )
         db.add(message)
         await db.commit()
-        await db.refresh(message)
         return message
     
     @staticmethod
     async def get_message_by_id(message_id: int, db: AsyncSession, strict: bool = False) -> Message | None:
-        result = await db.execute(select(Message).where(Message.id == message_id))
-        message = result.scalar_one_or_none()
+        result = await db.scalars(select(Message).where(Message.id == message_id))
+        message = result.one_or_none()
         if strict and message is None:
             raise NotFoundError("Message not found")
         return message
@@ -38,8 +37,8 @@ class MessageService:
     async def get_user_messages_in_chat(chat_id: int, user_id: int, db: AsyncSession, current_user: User) -> list[Message]:
         if not await MembershipUtils.check_user_membership(current_user.id, chat_id, db):
             raise PermissionDeniedError("You are not a member of this chat")
-        result = await db.execute(select(Message).where(Message.chat_id == chat_id, Message.sender_id == user_id))
-        return result.scalars().all()
+        result = await db.scalars(select(Message).where(Message.chat_id == chat_id, Message.sender_id == user_id))
+        return result.all()
 
 
     @staticmethod

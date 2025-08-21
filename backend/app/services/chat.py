@@ -19,8 +19,8 @@ class ChatService:
 
     @staticmethod   
     async def get_chat_by_id(chat_id: int, db: AsyncSession, strict: bool = False) -> Chat | None:
-        result = await db.execute(select(Chat).where(Chat.id == chat_id))
-        chat = result.scalar_one_or_none()
+        result = await db.scalars(select(Chat).where(Chat.id == chat_id))
+        chat = result.one_or_none()
         if strict and chat is None:
             raise NotFoundError("Chat not found")
         return chat
