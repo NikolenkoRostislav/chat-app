@@ -43,7 +43,7 @@ export default function Chat() {
     useEffect(() => {
         setTimeout(() => {
             messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
-        }, 0);
+        }, 1);
     }, [messages]);
 
     if (error) return <p>Error: {error}</p>;
