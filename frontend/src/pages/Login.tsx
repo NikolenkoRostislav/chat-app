@@ -10,24 +10,25 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const sockets_connect = async (token: string) => {
-        socket.connect();
-        socket.on("connect", () => {
-            console.log("connected");
-            socket.emit("identify_user", { token: token });
-            socket.emit("connect_user_to_chat")
-        });
+    const socket_connect = async (token: string) => {
+        if (!socket.connected) {
+            await new Promise<void>((resolve) => {
+                socket.once("connect", () => resolve());
+                socket.connect();
+            });
+        }
+
+        socket.emit("identify_user", {token})
     }
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         const payload = { username, password };
 
         try {
             const result = await post(`/user/auth/login`, payload, true);
             localStorage.setItem("token", result.access_token);
-            await sockets_connect(result.access_token);
+            await socket_connect(result.access_token);
             navigate("/");
         } catch (err) { 
             alert("Login failed: " + err);

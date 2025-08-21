@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import useAuthPost from "../../hooks/useAuthPost";
+import { socket } from "../../socket";
 
 type Props = {
     route: string;
@@ -21,6 +22,7 @@ export default function MessageButton({ route, chat_id }: Props) {
         const payload = { content: message, chat_id };
         try {
             await post(route, payload);
+            socket.emit("new_message_sent", {chat_id: chat_id})
             setMessage("");
         } catch (err) { 
             alert("Failed to send message: " + err);

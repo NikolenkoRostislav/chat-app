@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import PopupMenu from "../PopupMenu";
 import useAuthPost from "../../hooks/useAuthPost";
 import useCurrentUserID from "../../hooks/useCurrentUserID";
+import { socket } from "../../socket";
 
 type Props = {
     setChatCreationMenuOpen: (open: boolean) => void;
@@ -19,6 +20,10 @@ export default function ChatCreateMenu({setChatCreationMenuOpen}: Props) {
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!chat_name.trim()) {
+            alert("Chat name cannot be empty");
+            return;
+        }
 
         const chat_create_payload = {
             name: chat_name,
@@ -32,6 +37,7 @@ export default function ChatCreateMenu({setChatCreationMenuOpen}: Props) {
                 chat_id: data.id,
             }
             await add_post("/chat-member/join", member_add_payload);
+            socket.connect();
             navigate(`/chat/${data.id}`);
         } catch (err) {
             alert("Chat creation failed: " + err);
@@ -41,38 +47,37 @@ export default function ChatCreateMenu({setChatCreationMenuOpen}: Props) {
     return (
         <PopupMenu setMenuOpen={setChatCreationMenuOpen}>
             <h1 className="text-2xl font-semibold mb-4">Create New Chat</h1>
-            <form>
-                <div className="mb-10"/>
+            <form onSubmit={onSubmit}>
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Chat Name</label>
                     <input 
-                        type="text" 
-                        value={chat_name} 
-                        onChange={e => setChatName(e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg" 
-                        placeholder="Enter chat name" 
+                    type="text" 
+                    value={chat_name} 
+                    onChange={e => setChatName(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg" 
+                    placeholder="Enter chat name" 
+                    required
                     />
                 </div>
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Chat Icon URL</label>
                     <input 
-                        type="text" 
-                        value={icon_url} 
-                        onChange={e => setIconUrl(e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg" 
-                        placeholder="Enter chat icon url" 
+                    type="text" 
+                    value={icon_url} 
+                    onChange={e => setIconUrl(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg" 
+                    placeholder="Enter chat icon url" 
+                    required
                     />
                 </div>
-                <div className="mb-10" />
-                    
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    onClick={onSubmit}
+                    className="mt-5 w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                     Create Chat
                 </button>
-            </form>
+                </form>
+
         </PopupMenu>
     );
 }
