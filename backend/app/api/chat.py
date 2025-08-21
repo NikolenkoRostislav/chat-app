@@ -28,4 +28,9 @@ async def get_chat_members(chat_id: int, db: AsyncSession = Depends(get_db), cur
 @handle_exceptions
 async def get_chat_member_count(chat_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     return await ChatService.get_chat_member_count(chat_id, db, current_user)
+
+@router.delete("/delete/{chat_id}")
+@handle_exceptions
+async def delete_chat(chat_id: int, db: AsyncSession= Depends(get_db), current_user: User = Depends(get_current_user)):
+    return await ChatService.delete_chat(chat_id, db, current_user)
     

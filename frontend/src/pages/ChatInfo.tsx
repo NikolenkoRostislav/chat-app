@@ -7,6 +7,7 @@ import ChatMember from '../components/chat_info/ChatMember';
 import ChatMemberButton from '../components/chat_info/ChatMemberButton';
 import type { ChatMemberType } from '../components/chat_info/ChatMember';
 import default_chat from '../assets/default-chat.png';
+import ChatDeleteButton from '../components/chat_info/ChatDeleteButton';
 
 export default function ChatInfo() {
     const { chat_id } = useParams<{ chat_id: string }>();
@@ -66,7 +67,12 @@ export default function ChatInfo() {
                         />
                     ))}
                 </div>
-                {is_creator && <ChatMemberButton chat_id={chat_id} />}
+                {is_creator && 
+                    <div>
+                        <ChatMemberButton chat_id={chat_id} />
+                        <div className="relative mt-6 h-3"><ChatDeleteButton chat_id={chat_id} /></div>
+                    </div>
+                }
             </main>
         </>
     );

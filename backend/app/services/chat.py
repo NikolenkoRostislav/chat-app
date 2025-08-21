@@ -40,3 +40,13 @@ class ChatService:
     async def get_chat_member_count(chat_id: int, db: AsyncSession, current_user: User) -> int:
         chat_members = await ChatService.get_chat_members_by_chat_id(chat_id, db, current_user)
         return len(chat_members)
+
+    @staticmethod
+    async def delete_chat(chat_id: int, db: AsyncSession, current_user: User):
+        chat = await ChatService.get_chat_by_id(chat_id, db, current_user)
+        if (current_user.id != chat.creator_id):
+            raise PermissionDeniedError("You lack permission to delete this chat")
+        await db.delete(chat)
+        await db.commit()
+        return {"detail": "Chat deleted successfully"}
+        

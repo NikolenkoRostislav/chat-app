@@ -35,16 +35,6 @@ class MessageService:
         return message
 
     @staticmethod
-    async def delete_message(message_id: int, db: AsyncSession, current_user: User):
-        message = await MessageService.get_message_by_id(message_id, db, strict=True)
-        chat = message.chat
-        if message.sender_id != current_user.id and chat.creator_id != current_user.id:
-            raise PermissionDeniedError("You lack permission to delete this message")
-        await db.delete(message)
-        await db.commit()
-        return {"detail": "Message deleted successfully"}
-
-    @staticmethod
     async def get_user_messages_in_chat(chat_id: int, user_id: int, db: AsyncSession, current_user: User) -> list[Message]:
         if not await MembershipUtils.check_user_membership(current_user.id, chat_id, db):
             raise PermissionDeniedError("You are not a member of this chat")
@@ -64,3 +54,13 @@ class MessageService:
                 "user": UserReadPublic.from_orm(message.sender)
             })
         return full_messages
+
+    @staticmethod
+    async def delete_message(message_id: int, db: AsyncSession, current_user: User):
+        message = await MessageService.get_message_by_id(message_id, db, strict=True)
+        chat = message.chat
+        if message.sender_id != current_user.id and chat.creator_id != current_user.id:
+            raise PermissionDeniedError("You lack permission to delete this message")
+        await db.delete(message)
+        await db.commit()
+        return {"detail": "Message deleted successfully"}
