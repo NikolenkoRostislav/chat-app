@@ -64,17 +64,11 @@ export default function Chat() {
                         <p className="text-gray-500 text-center">No messages yet</p>
                     </div>
                 ) : (
-                    <div className="flex-1 overflow-y-auto space-y-2">
+                    <div className="flex-1 overflow-y-auto space-y-2 overflow-x-hidden">
                         {messages.map((message: MessageType, index: number) => (
                             <Message
                                 key={index}
-                                message={{
-                                    sender_name: message.sender_name,
-                                    sender_pfp: message.sender_pfp,
-                                    content: message.content,
-                                    sent_at: message.sent_at,
-                                    is_own_message: message.is_own_message,
-                                }}
+                                message={message}
                             />
                         ))}
                         <div ref={messagesEndRef}/>
