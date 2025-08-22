@@ -4,6 +4,7 @@ import ChatButton from '../components/home/ChatButton';
 import UserInfoButton from '../components/home/UserInfoButton';
 import ChatCreateButton from '../components/home/ChatCreateButton';
 import ChatCreateMenu from '../components/home/ChatCreateMenu';
+import LogoutButton from '../components/home/LogoutButton'
 import type { ChatButtonType } from '../components/home/ChatButton';
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
         <>  
             <nav className="flex items-center justify-between px-4 py-2 bg-white shadow-sm border-b sticky top-0 z-10">
                 <UserInfoButton />
+                <LogoutButton />
             </nav>
             <main className="max-w-3xl mx-auto p-4"> 
                 <div className="bg-white rounded-2xl shadow p-4 space-y-3">
