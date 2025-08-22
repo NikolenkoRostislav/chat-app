@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from contextlib import asynccontextmanager
 import socketio
 from app.config import settings
 from app.db import engine, Base
@@ -10,7 +11,13 @@ from app.api import *
 from app.utils.exceptions import *
 from app.utils.sockets import sio
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(user_router)
 app.include_router(chat_router)
 app.include_router(chat_member_router)
@@ -45,8 +52,3 @@ app.add_middleware(
 setup_logging(app)
 
 socket_app = socketio.ASGIApp(sio, other_asgi_app=app, socketio_path="ws/socket.io")
-
-@app.on_event("startup")
-async def on_startup():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
