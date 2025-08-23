@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import PopupMenu from "../general/PopupMenu";
 import useAuthPost from "../../hooks/useAuthPost";
 import useCurrentUserID from "../../hooks/useCurrentUserID";
-import { socket } from "../../socket";
 
 type Props = {
     setChatCreationMenuOpen: (open: boolean) => void;
@@ -37,7 +36,6 @@ export default function ChatCreateMenu({setChatCreationMenuOpen}: Props) {
                 chat_id: data.id,
             }
             await add_post("/chat-member/join", member_add_payload);
-            socket.connect();
             navigate(`/chat/${data.id}`);
         } catch (err) {
             alert("Chat creation failed: " + err);
@@ -76,8 +74,7 @@ export default function ChatCreateMenu({setChatCreationMenuOpen}: Props) {
                 >
                     Create Chat
                 </button>
-                </form>
-
+            </form>
         </PopupMenu>
     );
 }

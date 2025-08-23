@@ -18,7 +18,12 @@ export default function Chat() {
     const { id: current_user_id } = useCurrentUserID();
 
     useEffect(() => {
-        if (!socket.connected) socket.connect()
+        if (!socket.connected) {
+            socket.connect()
+        } else {
+            const token = localStorage.getItem("token");
+            socket.emit("identify_user", {token});
+        }
 
         const handleNewMessage = () => {
             refetch();
