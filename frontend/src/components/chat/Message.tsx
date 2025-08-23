@@ -30,7 +30,7 @@ function breakLongWords(text: string, limit = 30) {
 export default function Message({ message }: Props) {
     return (
         <div className={`flex max-w-md mx-auto my-2 ${message.is_own_message ? "justify-end mr-5 ml-15" : "justify-start ml-5 mr-15"}`}>
-            <div className={`flex items-start gap-4 p-3 rounded-lg shadow-sm text-left relative 
+            <div className={`flex items-start gap-4 p-3 rounded-lg shadow-sm text-left relative
                 ${message.is_own_message ? "flex-row-reverse bg-blue-100" : "bg-gray-100"}`}>
                 <div className="relative">
                     <RouteButton route={message.is_own_message ? "/user/me" : `/user/${message.sender_name}`}>
@@ -56,7 +56,8 @@ export default function Message({ message }: Props) {
                     <h2 className={`font-semibold text-gray-900 ${message.is_own_message ? "text-right" : "text-left"}`}>{message.sender_name}</h2>
                     <p className="mt-1 text-gray-700 whitespace-pre-wrap break-words">{breakLongWords(message.content)}</p>
                 </div>
-                <div className={`absolute bottom-0 border-l-15 translate-y-0.5
+                <div className={`absolute bottom-[-1px] bg-black/8 w-3 h-0.5 ${message.is_own_message ? "-right-2" : "-left-2"}`} />
+                <div className={`absolute bottom-0 border-l-15 translate-y-0.4
                     ${message.is_own_message 
                         ? "-right-2 border-t-15 border-t-transparent border-blue-100" 
                         : "-left-2 border-b-15 border-gray-100 border-l-transparent"
