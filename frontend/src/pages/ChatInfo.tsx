@@ -49,7 +49,7 @@ export default function ChatInfo() {
                         img.onerror = null;
                         img.src = default_chat;
                     }}
-                    className="w-32 h-32 rounded-full mx-auto mb-4" 
+                    className="w-32 h-32 rounded-full object-cover mx-auto mb-4" 
                 />
                 <h1 className="text-2xl font-bold mb-4 text-center">{chat.name}</h1>
                 <p><strong>Members:</strong></p>

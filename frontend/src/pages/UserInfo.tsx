@@ -33,7 +33,7 @@ export default function UserInfo() {
                         img.onerror = null;
                         img.src = default_pfp;
                     }}
-                    className="w-32 h-32 rounded-full mx-auto mb-4" 
+                    className="w-32 h-32 rounded-full object-cover mx-auto mb-4" 
                 />
                 <p><strong>Username:</strong> {user.username}</p>
                 <div>

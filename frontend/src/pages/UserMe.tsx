@@ -39,7 +39,7 @@ export default function UserMe() {
                             img.onerror = null;
                             img.src = default_pfp;
                         }}
-                        className="w-32 h-32 rounded-full mx-auto mb-4" 
+                        className="w-32 h-32 rounded-full object-cover mx-auto mb-4" 
                     />
                 </UserUpdateButton>
                 <UserUpdateButton route="/user/update/email" field_name="email" refresh={refetch}>
