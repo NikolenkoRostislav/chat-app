@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useAuthFetch from "../hooks/useAuthFetch";
-import UserUpdateButton from "../components/UserUpdateButton";
-import HomeButton from "../components/HomeButton";
+import UserUpdateButton from "../components/user_info/UserUpdateButton";
+import HomeButton from "../components/general/HomeButton";
 import default_pfp from '../assets/default-pfp.png';
 
 export default function UserMe() {

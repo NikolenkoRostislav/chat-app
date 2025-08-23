@@ -1,4 +1,4 @@
-import RouteButton from "../RouteButton";
+import RouteButton from "../general/RouteButton";
 import default_pfp from '../../assets/default-pfp.png';
 import useAuthFetch from "../../hooks/useAuthFetch";
 

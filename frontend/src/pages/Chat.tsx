@@ -66,10 +66,7 @@ export default function Chat() {
                 ) : (
                     <div className="flex-1 overflow-y-auto space-y-2 overflow-x-hidden">
                         {messages.map((message: MessageType, index: number) => (
-                            <Message
-                                key={index}
-                                message={message}
-                            />
+                            <Message key={index} message={message}/>
                         ))}
                         <div ref={messagesEndRef}/>
                     </div>

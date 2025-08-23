@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PopupMenu from "../PopupMenu";
+import PopupMenu from "../general/PopupMenu";
 import useAuthPost from "../../hooks/useAuthPost";
 import useCurrentUserID from "../../hooks/useCurrentUserID";
 import { socket } from "../../socket";

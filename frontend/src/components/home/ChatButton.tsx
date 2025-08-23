@@ -1,4 +1,4 @@
-import RouteButton from "../RouteButton";
+import RouteButton from "../general/RouteButton";
 import default_chat from '../../assets/default-chat.png';
 
 export type ChatButtonType = {

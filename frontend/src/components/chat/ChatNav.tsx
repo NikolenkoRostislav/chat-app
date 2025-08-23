@@ -1,7 +1,7 @@
 /*import ActivityIndicator from "./ActivityIndicator";*/
 import useCurrentUserID from "../../hooks/useCurrentUserID";
-import HomeButton from "../HomeButton";
-import RouteButton from "../RouteButton";
+import HomeButton from "../general/HomeButton";
+import RouteButton from "../general/RouteButton";
 import ChatLeaveButton from "./ChatLeaveButton";
 import default_chat from '../../assets/default-chat.png';
 

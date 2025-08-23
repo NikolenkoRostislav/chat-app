@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import usePost from "../hooks/usePost";
-import RouteButton from "../components/RouteButton";
+import RouteButton from "../components/general/RouteButton";
 import { socket } from "../socket";
 
 export default function Login() {

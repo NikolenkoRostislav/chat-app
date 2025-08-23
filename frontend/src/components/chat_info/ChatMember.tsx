@@ -1,6 +1,6 @@
 import useFetch from '../../hooks/useFetch';
 import useAuthDelete from '../../hooks/useAuthDelete';
-import RouteButton from '../RouteButton';
+import RouteButton from '../general/RouteButton';
 import default_pfp from '../../assets/default-pfp.png';
 
 export type ChatMemberType = {

@@ -1,4 +1,4 @@
-import RouteButton from "../RouteButton";
+import RouteButton from "../general/RouteButton";
 
 const onClick = () => {
     localStorage.removeItem("token");

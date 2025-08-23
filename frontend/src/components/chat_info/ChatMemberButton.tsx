@@ -2,10 +2,11 @@ import useAuthPost from "../../hooks/useAuthPost";
 import add_user_icon from "../../assets/add-icon.png";
 
 type Props = {
+    refresh: () => void;
     chat_id: string;
 };
 
-export default function ChatMemberButton({ chat_id }: Props) {
+export default function ChatMemberButton({ chat_id, refresh }: Props) {
     const { post, loading } = useAuthPost();
 
     const handleClick = async () => {
@@ -18,6 +19,7 @@ export default function ChatMemberButton({ chat_id }: Props) {
         const payload = { chat_id, user_id };
         try {
             await post("/chat-member/join", payload);
+            refresh();
         } catch (err) { 
             alert("Failed to add user: " + err);
         }

@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
-import HomeButton from '../components/HomeButton';
+import HomeButton from '../components/general/HomeButton';
 import default_pfp from '../assets/default-pfp.png';
 
 export default function UserInfo() {

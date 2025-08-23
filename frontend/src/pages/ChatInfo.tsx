@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import useAuthFetch from '../hooks/useAuthFetch';
 import useCurrentUserID from '../hooks/useCurrentUserID';
-import HomeButton from '../components/HomeButton';
+import HomeButton from '../components/general/HomeButton';
 import ChatMember from '../components/chat_info/ChatMember';
 import ChatMemberButton from '../components/chat_info/ChatMemberButton';
 import type { ChatMemberType } from '../components/chat_info/ChatMember';
@@ -69,7 +69,7 @@ export default function ChatInfo() {
                 </div>
                 {is_creator && 
                     <div>
-                        <ChatMemberButton chat_id={chat_id} />
+                        <ChatMemberButton refresh={refetch} chat_id={chat_id} />
                         <div className="relative mt-6 h-3"><ChatDeleteButton chat_id={chat_id} /></div>
                     </div>
                 }

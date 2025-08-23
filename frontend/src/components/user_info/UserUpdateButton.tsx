@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import useAuthPatch from "../hooks/useAuthPatch";
+import useAuthPatch from "../../hooks/useAuthPatch";
 
 type Props = {
     refresh: () => void;
