@@ -1,7 +1,7 @@
 import socketio
 from app.schemas import MessageSend, ChatMemberCreate
 from app.services import MessageService, UserService, ChatMemberService
-from app.utils.auth import decode_access_token
+from app.utils.auth import decode_token
 from app.db.database import SessionLocal
 
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
@@ -14,7 +14,7 @@ async def identify_user(sid, data):
             await sio.leave_room(sid, room)
     token = data.get("token")
     try:
-        payload = decode_access_token(token)
+        payload = decode_token(token)
         user_id = payload["sub"]
     except Exception:
         await sio.disconnect(sid)

@@ -6,6 +6,9 @@ class AppError(Exception):
 
 class InvalidEntryError(AppError):
     pass
+
+class UnauthorizedError(AppError):
+    pass
     
 class PermissionDeniedError(AppError):
     pass
@@ -23,6 +26,8 @@ def handle_exceptions(func):
             return await func(*args, **kwargs)
         except InvalidEntryError as e:
             raise HTTPException(status_code=400, detail=str(e))
+        except UnauthorizedError as e:
+            raise HTTPException(status_code=401, detail=str(e))
         except PermissionDeniedError as e:
             raise HTTPException(status_code=403, detail=str(e))
         except NotFoundError as e:
@@ -36,6 +41,7 @@ def handle_exceptions(func):
 __all__ = [
     "AppError",
     "InvalidEntryError",
+    "UnauthorizedError",
     "PermissionDeniedError",
     "NotFoundError",
     "AlreadyExistsError"

@@ -4,9 +4,8 @@ from sqlalchemy.orm import selectinload
 from datetime import datetime
 from app.models import User, Chat, ChatMember
 from app.schemas import UserCreate
-from app.utils.auth import create_access_token, authenticate_user
 from app.utils.exceptions import *
-from app.utils.security import get_password_hash, verify_password
+from app.utils.security import get_password_hash
 
 async def _get_user_by_field(field_name: str, value, db: AsyncSession, strict: bool) -> User | None:
     field = getattr(User, field_name)
@@ -40,13 +39,6 @@ class UserService:
         db.add(user)
         await db.commit()
         return user
-
-    @staticmethod
-    async def login(username: str, password: str, db: AsyncSession) -> str:
-        user = await UserService.get_user_by_username(username, db)
-        if not user:
-            raise InvalidEntryError("Invalid username")
-        return authenticate_user(user, password, db)
 
     @staticmethod
     async def get_user_by_username(username: str, db: AsyncSession, strict: bool = False) -> User | None:

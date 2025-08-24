@@ -26,7 +26,7 @@ export default function Login() {
         const payload = { username, password };
 
         try {
-            const result = await post(`/user/auth/login`, payload, true);
+            const result = await post(`/auth/login`, payload, true);
             localStorage.setItem("token", result.access_token);
             await socket_connect(result.access_token);
             navigate("/");
@@ -44,7 +44,7 @@ export default function Login() {
                     <label>
                         Username:
                         <input
-                            type="username"
+                            type="text"
                             value={username}
                             onChange={e => setUsername(e.target.value)}
                             required
@@ -76,6 +76,5 @@ export default function Login() {
                 </RouteButton>
             </div>
         </main>
-        
     );
 }
