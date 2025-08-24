@@ -37,9 +37,11 @@ Future versions may include features like dark theme and improved chatroom manag
 ## Features
 
 - JWT-based authentication
+- Session management with secure refresh tokens stored in HTTP-only cookies
 - Real-time messaging with Socket.IO
 - Create, join, delete and view chats
 - Add and remove chat members
+- View user profiles
 - Update your profile
 
 ---
