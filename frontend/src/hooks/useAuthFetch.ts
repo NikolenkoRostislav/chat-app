@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import useAuthPost from "./useAuthPost";
 
 /**
 * Custom hook to fetch authenticated data from backend.
@@ -19,11 +20,11 @@ export default function useAuthFetch<T = any>(route: string) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const {post: refresh_token} = useAuthPost();
 
     const fetch_data = useCallback(async () => {
         const token = localStorage.getItem("token");
         if (!token) {
-            alert("Not logged in!");
             navigate("/login");
             return;
         }
@@ -37,9 +38,14 @@ export default function useAuthFetch<T = any>(route: string) {
             const data = await response.json();
             if (!response.ok) {
                 if (response.status === 401) {
-                    alert("Session expired. Please login again.");
-                    navigate("/login");
-                    return;
+                    try {
+                        const new_token = await refresh_token("/auth/refresh", {});
+                        localStorage.setItem("token", new_token.access_token)
+                        return await fetch_data();
+                    } catch {
+                        navigate("/login");
+                        return;
+                    }
                 }
                 throw new Error(data.detail || response.statusText);
             }

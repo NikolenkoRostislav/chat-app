@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:5173"]
     APP_NAME: str = "SimpleChatApp"
+    SECURE_COOKIES: bool = False #set to true in production!!!
     DEBUG: bool = False
     ALGORITHM: str
     DATABASE_URL: str

@@ -13,7 +13,7 @@ export default function useAuthRequest<T = any>() {
 
         const token = localStorage.getItem("token");
         if (!token) {
-            alert("Not logged in!");
+            console.log("Token missing or expired, redirecting to login page");
             navigate("/login");
             return;
         }
@@ -23,6 +23,7 @@ export default function useAuthRequest<T = any>() {
                 method: method,
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify(payload),
+                credentials: "include"
             });
 
             const result = await response.json();

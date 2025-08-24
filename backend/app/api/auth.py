@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 from app.config import settings
@@ -30,14 +30,15 @@ async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depen
 
 @router.post("/refresh", response_model=Token)
 @handle_exceptions
-async def refresh_token(refresh_token: str, response: Response, db: AsyncSession = Depends(get_db)):
-    tokens = await AuthService.refresh(refresh_token, db)
+async def refresh_token(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+    refresh_t = request.cookies.get("refresh_token")
+    tokens = await AuthService.refresh(refresh_t, db)
 
     response.set_cookie(
         key="refresh_token",
         value=tokens["refresh_token"],
         httponly=True,
-        secure=True,
+        secure=settings.SECURE_COOKIES,
         samesite="strict",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     )
