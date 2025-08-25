@@ -1,17 +1,16 @@
 from fastapi import APIRouter, Depends, Response, Request
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 from app.config import settings
-from app.db.session import get_db
 from app.schemas import Token
 from app.services import AuthService
 from app.utils.exceptions import handle_exceptions
+from app.db import DatabaseDep
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/login", response_model=Token)
 @handle_exceptions
-async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+async def login(response: Response, db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depends()):
     tokens = await AuthService.login(form_data.username, form_data.password, db)
 
     response.set_cookie(
@@ -30,7 +29,7 @@ async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depen
 
 @router.post("/refresh", response_model=Token)
 @handle_exceptions
-async def refresh_token(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+async def refresh_token(request: Request, response: Response, db: DatabaseDep):
     refresh_t = request.cookies.get("refresh_token")
     tokens = await AuthService.refresh(refresh_t, db)
 

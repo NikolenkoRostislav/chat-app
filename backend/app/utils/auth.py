@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
-from fastapi import Depends, HTTPException, status
+from typing import Annotated
+from fastapi import Depends 
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
-from app.db import get_db
-from app.utils.exceptions import *
 from app.models import User
 from app.utils.exceptions import *
 from app.utils.security import verify_password
+from app.db import DatabaseDep
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
@@ -31,7 +31,7 @@ def authenticate_user(user: User, password: str, db: AsyncSession) -> User:
         "refresh_token": create_refresh_token({"sub": str(user.id)})
     }
 
-async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)) -> User:
+async def get_current_user(db: DatabaseDep, token: str = Depends(oauth2_scheme)) -> User:
     from app.services.user import UserService
 
     try:
@@ -45,3 +45,5 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
     if user is None:
         raise NotFoundError("User not found")
     return user
+
+CurrentUserDep = Annotated[User, Depends(get_current_user)]
