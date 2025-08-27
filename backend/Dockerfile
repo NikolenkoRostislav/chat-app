@@ -6,10 +6,10 @@ COPY requirements.txt /code/requirements.txt
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /code/app
+COPY . .
 
 EXPOSE 8000
 
 ENTRYPOINT ["uvicorn"]
 
-CMD ["app.main:socket_app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["main:socket_app", "--host", "0.0.0.0", "--port", "8000"]

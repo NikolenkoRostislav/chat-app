@@ -10,6 +10,7 @@ from app.models import *
 from app.api import *
 from app.utils.exceptions import *
 from app.utils.sockets import sio
+import uvicorn
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -57,3 +58,6 @@ app.add_middleware(
 setup_logging(app)
 
 socket_app = socketio.ASGIApp(sio, other_asgi_app=app, socketio_path="ws/socket.io")
+
+if __name__ == "__main__":
+    uvicorn.run("main:socket_app", host="0.0.0.0", port=8000, reload=settings.DEBUG)

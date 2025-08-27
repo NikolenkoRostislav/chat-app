@@ -91,7 +91,7 @@ VITE_BACKEND_URL=http://localhost:8000
 ```bash
 cd backend
 pip install -r requirements.txt
-uvicorn app.main:socket_app --reload
+python main.py
 ```
 
 ### 4. Frontend setup
