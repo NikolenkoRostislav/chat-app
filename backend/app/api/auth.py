@@ -46,3 +46,9 @@ async def refresh_token(request: Request, response: Response, db: DatabaseDep):
         "access_token": tokens["access_token"],
         "token_type": "bearer"
     }
+
+@router.post("/logout")
+@handle_exceptions
+async def logout(response: Response):
+    response.delete_cookie(key="refresh_token")
+    return {"message": "logged out"}

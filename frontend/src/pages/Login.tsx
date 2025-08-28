@@ -26,7 +26,7 @@ export default function Login() {
         const payload = { username, password };
 
         try {
-            const result = await post(`/auth/login`, payload, true);
+            const result = await post("/auth/login", payload, true);
             localStorage.setItem("token", result.access_token);
             await socket_connect(result.access_token);
             navigate("/");
