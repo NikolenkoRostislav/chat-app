@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import RouteButton from '../general/RouteButton';
+import DeleteMessageButton from './DeleteMessageButton';
 import default_pfp from '../../assets/default-pfp.png';
 
 export type MessageType = {
+    chat_id: number;
+    id: number
     sender_name: string;
     sender_pfp: string;
     content: string;
@@ -28,10 +32,20 @@ function breakLongWords(text: string, limit = 30) {
 }
 
 export default function Message({ message }: Props) {
+    const [deletePos, setDeletePos] = useState<{ x: number; y: number } | null>(null);
+
+    const handleRightClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        setDeletePos({ x: e.clientX, y: e.clientY });
+    };
+
     return (
         <div className={`flex max-w-md mx-auto my-2 ${message.is_own_message ? "justify-end mr-5 ml-15" : "justify-start ml-5 mr-15"}`}>
-            <div className={`flex items-start gap-4 p-3 rounded-lg shadow-sm text-left relative
-                ${message.is_own_message ? "flex-row-reverse bg-blue-100" : "bg-gray-100"}`}>
+            <div 
+                className={`flex items-start gap-4 p-3 rounded-lg shadow-sm text-left relative
+                ${message.is_own_message ? "flex-row-reverse bg-blue-100" : "bg-gray-100"}`}
+                onContextMenu={handleRightClick}
+            >
                 <div className="relative">
                     <RouteButton route={message.is_own_message ? "/user/me" : `/user/${message.sender_name}`}>
                         <img
@@ -64,7 +78,9 @@ export default function Message({ message }: Props) {
                     }
                 `}/>
             </div>
+            {deletePos && message.is_own_message && (
+                <DeleteMessageButton chat_id={message.chat_id} id={message.id} x={deletePos.x} y={deletePos.y} setDeletePos={setDeletePos}/>
+            )}
         </div>
     );
 }
-

@@ -47,6 +47,7 @@ class MessageService:
         full_messages = []
         for message in chat_messages:
             full_messages.append({
+                "id": message.id,
                 "sender_id": message.sender_id,
                 "content": message.content,
                 "sent_at": message.timestamp,

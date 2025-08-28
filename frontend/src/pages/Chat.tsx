@@ -38,6 +38,8 @@ export default function Chat() {
     }, []);
 
     const messages: MessageType[] = useMemo(() => (message_data || []).map((m: any) => ({
+        chat_id: chat_id,
+        id: m.id,
         sender_name: m.user.username,
         sender_pfp: m.user.pfp_url,
         content: m.content,
