@@ -54,7 +54,7 @@ export default function Message({ message }: Props) {
                 </div>
                 <div className="flex-1 flex flex-col relative">
                     <h2 className={`font-semibold text-gray-900 ${message.is_own_message ? "text-right" : "text-left"}`}>{message.sender_name}</h2>
-                    <p className="mt-1 text-gray-700 whitespace-pre-wrap break-words">{breakLongWords(message.content)}</p>
+                    <p className="mt-1 text-gray-700 whitespace-pre-wrap break-words">{breakLongWords(message.content.trim())}</p>
                 </div>
                 <div className={`absolute bottom-[-1px] bg-black/8 w-3 h-0.5 ${message.is_own_message ? "-right-2" : "-left-2"}`} />
                 <div className={`absolute bottom-0 border-l-15 translate-y-0.4

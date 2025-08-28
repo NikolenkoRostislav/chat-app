@@ -17,8 +17,8 @@ async def login(response: Response, db: DatabaseDep, form_data: OAuth2PasswordRe
         key="refresh_token",
         value=tokens["refresh_token"],
         httponly=True,
-        secure=True,
-        samesite="strict",
+        secure=settings.SECURE_COOKIES,
+        samesite="lax",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     )
 
@@ -38,7 +38,7 @@ async def refresh_token(request: Request, response: Response, db: DatabaseDep):
         value=tokens["refresh_token"],
         httponly=True,
         secure=settings.SECURE_COOKIES,
-        samesite="strict",
+        samesite="lax",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     )
 

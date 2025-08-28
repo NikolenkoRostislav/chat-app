@@ -37,11 +37,17 @@ export default function MessageButton({ route, chat_id }: Props) {
     }, [message]);
 
     return (
-        <form onSubmit={handleSend} className="flex flex-row gap-4">
+        <form onSubmit={handleSend} className="flex flex-row gap-4 z-10">
             <textarea
                 ref={textareaRef}
                 value={message}
                 onChange={e => setMessage(e.target.value)}
+                onKeyDown={e => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend(e);
+                    }
+                }}
                 required
                 className="flex-1 p-2 rounded border resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-400"
                 rows={1}
