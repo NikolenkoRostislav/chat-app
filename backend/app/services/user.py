@@ -1,3 +1,4 @@
+from asyncio import gather
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
@@ -23,8 +24,11 @@ async def _update_field(user: User, field_name: str, value, db: AsyncSession) ->
 class UserService:
     @staticmethod
     async def create_user(user_data: UserCreate, db: AsyncSession) -> User:
-        existing_email = await UserService.get_user_by_email(user_data.email, db)
-        existing_username = await UserService.get_user_by_username(user_data.username, db)
+        existing_email, existing_username = await gather(
+            UserService.get_user_by_email(user_data.email, db),
+            UserService.get_user_by_username(user_data.username, db),
+        )
+
         if existing_email:
             raise AlreadyExistsError("Email already in use")
         elif existing_username:
