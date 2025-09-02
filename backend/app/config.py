@@ -7,9 +7,11 @@ class Settings(BaseSettings):
     APP_NAME: str = "SimpleChatApp"
     SECURE_COOKIES: bool = False #set to true in production!!!
     DEBUG: bool = True
+    USE_TG_NOTIFS: bool = True #set to true if you want to send users notifications via telegram
     ALGORITHM: str
     DATABASE_URL: str
     SECRET_KEY: str
+    TG_API_KEY: str
 
     class Config:
         env_file = ".env"
