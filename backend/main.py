@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from telegram.ext import Application
 import socketio
 import uvicorn
 from app.config import settings
@@ -12,7 +11,6 @@ from app.models import *
 from app.api import *
 from app.utils.exceptions import *
 from app.utils.sockets import sio
-from app.utils.tg_bot import register_handlers
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -60,10 +58,6 @@ app.add_middleware(
 setup_logging(app)
 
 socket_app = socketio.ASGIApp(sio, other_asgi_app=app, socketio_path="ws/socket.io")
-
-if settings.USE_TG_NOTIFS:
-    telegram_app = Application.builder().token(settings.TG_API_KEY).build()
-    register_handlers(telegram_app)
 
 if __name__ == "__main__":
     uvicorn.run("main:socket_app", host="0.0.0.0", port=8000, reload=settings.DEBUG)
