@@ -24,6 +24,8 @@ app.include_router(chat_router)
 app.include_router(chat_member_router)
 app.include_router(message_router)
 app.include_router(auth_router)
+if settings.TELEGRAM_NOTIFICATIONS:
+    app.include_router(tg_connection_router)
 
 @app.exception_handler(InvalidEntryError)
 async def invalid_entry_handler(request: Request, exc: InvalidEntryError):

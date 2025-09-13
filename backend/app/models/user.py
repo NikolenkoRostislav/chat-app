@@ -15,3 +15,4 @@ class User(Base):
 
     messages_sent = relationship("Message", back_populates="sender")
     chat_memberships = relationship("ChatMember", back_populates="user")
+    telegram_connection = relationship("TelegramConnection", back_populates="user")

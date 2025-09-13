@@ -3,3 +3,4 @@ from .chat import ChatService
 from .chat_member import ChatMemberService
 from .message import MessageService
 from .auth import AuthService
+from .telegram_connection import TelegramConnectionService
