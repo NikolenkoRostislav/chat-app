@@ -1,4 +1,6 @@
+from asyncio import gather
 import socketio
+from app.config import settings
 from app.schemas import MessageSend, ChatMemberCreate
 from app.services import MessageService, UserService, ChatMemberService
 from app.utils.auth import decode_token
@@ -31,7 +33,24 @@ async def identify_user(sid, data):
             print(f"User {user.username} enetered chat with id {chat.id}")
     print(f"User {user.username} authenticated with sid {sid}")
 
+async def placeholder1():
+    return [1, 2, 3]
+
+async def placeholder2():
+    return "placeholder_chat_name"
+
 @sio.event
 async def new_message_sent(sid, data):
     chat_id = data.get("chat_id")
     await sio.emit("new_message_received", room=f"chat:{chat_id}")
+
+    if settings.TELEGRAM_NOTIFICATIONS:
+        tg_chat_ids, chat_name = await gather(
+            placeholder1(),
+            placeholder2(),
+        )
+        notification_data = {
+            "chat_ids": tg_chat_ids,
+            "chat_name": chat_name
+        }
+        await sio.emit("notify", notification_data)
