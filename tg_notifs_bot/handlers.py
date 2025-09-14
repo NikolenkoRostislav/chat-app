@@ -1,5 +1,7 @@
+import aiohttp
 from telegram import Update
 from telegram.ext import CommandHandler, MessageHandler, ConversationHandler, ContextTypes, filters
+from config import settings
 
 ASK_TEMP_CODE = range(1)
 
@@ -12,14 +14,20 @@ class BotHandlers:
 
     @staticmethod
     async def handle_temp_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        user_input = update.message.text
-        if not user_input.isdigit() or not len(user_input) == 6:
+        temp_code = update.message.text
+        if not temp_code.isdigit() or not len(temp_code) == 6:
             await update.message.reply_text("Please send a valid code.")
             return ASK_TEMP_CODE
-        number = int(user_input)
-        await update.message.reply_text(f"Got your code: {number}, verifying...")
+        await update.message.reply_text(f"Got your code: {temp_code}, verifying...")
 
-        # call API to verify code and link account, I'll add this later
+        payload = {"temp_code": temp_code, "telegram_chat_id": update.message.chat_id}
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{settings.BACKEND_URL}/tg-connection/connect", params=payload) as resp:
+                data = await resp.json()
+                if resp.status != 200:
+                    await update.message.reply_text("Failed to link your account. Please ensure the code is correct and try again.")
+                    return ASK_TEMP_CODE    
+                await update.message.reply_text("account successfully linked! You will start receiving notifications here.")
 
         return ConversationHandler.END  
 
