@@ -4,11 +4,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import datetime, timedelta
 from app.models import TelegramConnection
+from app.services import UserService
 from app.utils.exceptions import *
+
+async def _update_field(connection: TelegramConnection, field_name: str, value, db: AsyncSession) -> TelegramConnection | None:
+    setattr(connection, field_name, value)
+    await db.commit()
+    return connection
 
 class TelegramConnectionService:
     @staticmethod
     async def create_new_connection(user_id: int, db: AsyncSession) -> TelegramConnection:
+        await UserService.get_user_by_id(user_id, db, True)
         new_connection = TelegramConnection(user_id=user_id, code_expiry_time=datetime.utcnow())
         db.add(new_connection)
         await db.commit()
@@ -16,24 +23,36 @@ class TelegramConnectionService:
 
     @staticmethod
     async def get_connection_by_user_id(user_id: int, db: AsyncSession, auto_create: bool = False) -> TelegramConnection | None:
-        connection = await db.scalars(select(TelegramConnection).where(TelegramConnection.user_id == user_id))
-        result = connection.one_or_none()
-        if auto_create and result is None:
+        await UserService.get_user_by_id(user_id, db, True)
+        result = await db.scalars(select(TelegramConnection).where(TelegramConnection.user_id == user_id))
+        connection = result.one_or_none()
+        if auto_create and connection is None:
             return await TelegramConnectionService.create_new_connection(user_id, db)
-        return result
+        return connection
 
     @staticmethod
-    async def connect_user_to_bot(user_id: int, temp_code: str, telegram_chat_id: str, db: AsyncSession):
-        connection = await TelegramConnectionService.get_connection_by_user_id(user_id, db, True)
-        if connection.temp_code != temp_code or connection.code_expiry_time < datetime.utcnow():
-            raise InvalidEntryError("Invalid or expired temporary code")
-        #Update connection details to include telegram_chat_id
-        return "connected to bot (placeholder)"
+    async def get_connection_by_temp_code(temp_code: str, db: AsyncSession, strict: bool = False) -> TelegramConnection | None:
+        if temp_code is None: raise InvalidEntryError("Temporary code is required")
+        result = await db.scalars(select(TelegramConnection).where(
+            TelegramConnection.temp_code == temp_code, TelegramConnection.code_expiry_time > datetime.utcnow()
+        ))
+        connection = result.one_or_none()
+        if connection is None and strict: raise NotFoundError("Invalid or expired temporary code")
+        return connection
+
+    @staticmethod
+    async def connect_user_to_bot(temp_code: str, telegram_chat_id: str, db: AsyncSession):
+        connection = await TelegramConnectionService.get_connection_by_temp_code(temp_code, db, True)
+        await _update_field(connection, 'telegram_chat_id', telegram_chat_id, db)
+        return connection
 
     @staticmethod
     async def create_temp_code(user_id: int, db: AsyncSession):
         connection = await TelegramConnectionService.get_connection_by_user_id(user_id, db, True)
         code = str(secrets.randbelow(10**6)).zfill(6)
         code_expiry_time = datetime.utcnow() + timedelta(minutes=10)
-        #Update connection with new temp code and expiry time
-        return {"generated temp code (placeholder)": code, "expires_at (placeholder)": code_expiry_time}
+        if await TelegramConnectionService.get_connection_by_temp_code(code, db):
+            return await TelegramConnectionService.create_temp_code(user_id, db)
+        await _update_field(connection, 'temp_code', code, db)
+        await _update_field(connection, 'code_expiry_time', code_expiry_time, db)
+        return connection

@@ -7,8 +7,8 @@ router = APIRouter(prefix="/tg-connection", tags=["tg_connection"])
 
 @router.post("/connect")
 @handle_exceptions
-async def connect_user_to_bot(user_id: int, temp_code: str, telegram_chat_id: str, db: DatabaseDep):
-    return await TelegramConnectionService.connect_user_to_bot(user_id, temp_code, telegram_chat_id, db)
+async def connect_user_to_bot(temp_code: str, telegram_chat_id: str, db: DatabaseDep):
+    return await TelegramConnectionService.connect_user_to_bot(temp_code, telegram_chat_id, db)
 
 @router.post("/temp-code")
 @handle_exceptions
