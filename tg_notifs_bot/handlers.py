@@ -9,8 +9,17 @@ class BotHandlers:
     @staticmethod
     async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Welcome to Chat App's notification bot!")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{settings.BACKEND_URL}/tg-connection/status/{update.message.chat_id}") as resp:
+                if await resp.json():
+                    await update.message.reply_text("This Telegram account is already linked. If you want to link a different account, please disconnect from the web app first.")
+                    return ConversationHandler.END
         await update.message.reply_text("Please enter a temporary code to link your account. You can generate this code from your account info page in the web app.")
         return ASK_TEMP_CODE
+
+    @staticmethod
+    async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        return ConversationHandler.END
 
     @staticmethod
     async def handle_temp_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -38,6 +47,6 @@ class BotHandlers:
             states={
                 ASK_TEMP_CODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, BotHandlers.handle_temp_code)],
             },
-            fallbacks=[],
+            fallbacks=[CommandHandler("cancel", BotHandlers.cancel)],
         )
         app.add_handler(conv_handler)

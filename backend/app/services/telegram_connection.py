@@ -1,4 +1,3 @@
-from asyncio import gather
 import secrets
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -41,9 +40,25 @@ class TelegramConnectionService:
         return connection
 
     @staticmethod
-    async def connect_user_to_bot(temp_code: str, telegram_chat_id: str, db: AsyncSession):
+    async def get_connection_by_chat_id(telegram_chat_id: str, db: AsyncSession, strict: bool = False) -> TelegramConnection | None:
+        if telegram_chat_id is None: raise InvalidEntryError("Telegram chat ID is required")
+        result = await db.scalars(select(TelegramConnection).where(
+            TelegramConnection.telegram_chat_id == telegram_chat_id
+        ))
+        connection = result.one_or_none()
+        if connection is None and strict: raise NotFoundError("No connection found for the provided Telegram chat ID")
+        return connection
+
+    @staticmethod
+    async def connect_user(temp_code: str, telegram_chat_id: str, db: AsyncSession):
         connection = await TelegramConnectionService.get_connection_by_temp_code(temp_code, db, True)
         await _update_field(connection, 'telegram_chat_id', telegram_chat_id, db)
+        return connection
+
+    @staticmethod
+    async def disconnect_user(user_id: int, db: AsyncSession):
+        connection = await TelegramConnectionService.get_connection_by_user_id(user_id, db, True)
+        await _update_field(connection, 'telegram_chat_id', "Disconnected", db)
         return connection
 
     @staticmethod

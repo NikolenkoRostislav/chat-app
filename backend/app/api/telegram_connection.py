@@ -8,8 +8,18 @@ router = APIRouter(prefix="/tg-connection", tags=["tg_connection"])
 
 @router.post("/connect")
 @handle_exceptions
-async def connect_user_to_bot(temp_code: str, telegram_chat_id: str, db: DatabaseDep):
-    return await TelegramConnectionService.connect_user_to_bot(temp_code, telegram_chat_id, db)
+async def connect_user(temp_code: str, telegram_chat_id: str, db: DatabaseDep):
+    return await TelegramConnectionService.connect_user(temp_code, telegram_chat_id, db)
+
+@router.post("/disconnect")
+@handle_exceptions
+async def disconnect_user(current_user: CurrentUserDep, db: DatabaseDep):
+    return await TelegramConnectionService.disconnect_user(current_user.id, db)
+
+@router.get("/status/{telegram_chat_id}")
+@handle_exceptions
+async def get_connection_status(telegram_chat_id: str, db: DatabaseDep):
+    return await TelegramConnectionService.get_connection_by_chat_id(telegram_chat_id, db) is not None
 
 @router.post("/temp-code")
 @handle_exceptions
