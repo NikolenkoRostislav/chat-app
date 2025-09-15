@@ -11,4 +11,4 @@ class TelegramConnection(Base):
     temp_code = Column(String)
     code_expiry_time = Column(DateTime)
 
-    user = relationship("User", back_populates="telegram_connection")
+    user = relationship("User", back_populates="telegram_connection", uselist=False)
