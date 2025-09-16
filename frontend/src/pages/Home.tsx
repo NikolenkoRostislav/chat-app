@@ -6,6 +6,8 @@ import ChatCreateButton from '../components/home/ChatCreateButton';
 import ChatCreateMenu from '../components/home/ChatCreateMenu';
 import LogoutButton from '../components/home/LogoutButton'
 import type { ChatButtonType } from '../components/home/ChatButton';
+import RouteButton from "../components/general/RouteButton";
+import telegram_logo from '../assets/telegram-logo.png';
 
 export default function Home() {
     const [chatCreationMenuOpen, setChatCreationMenuOpen] = useState(false);
@@ -39,6 +41,14 @@ export default function Home() {
                 </div>
                 {chatCreationMenuOpen && <ChatCreateMenu setChatCreationMenuOpen={setChatCreationMenuOpen} />}
             </main>
+            <footer className="fixed bottom-0 left-0 w-full bg-white border-t shadow-md p-3 flex items-center justify-between">
+                <span className="text-sm text-gray-500">
+                    Chat App by <span className="font-medium">Rostislav Nikolenko</span>
+                </span>
+                <RouteButton route="/telegram_link">
+                    <img src={telegram_logo} alt="Telegram account link button" className="w-8 h-8 hover:opacity-80 transition" />
+                </RouteButton>
+            </footer>
         </>
     );
 }

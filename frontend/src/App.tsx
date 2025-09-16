@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import UserMe from './pages/UserMe';
 import UserInfo from './pages/UserInfo';
+import TelegramLink from './pages/TelegramLink';
 import useActivityPing from './hooks/useActivityPing';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
             <Route path="/chat/:chat_id" element={<Chat />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/telegram_link" element={<TelegramLink />} />
             <Route path="/user/me" element={<UserMe />} />
             <Route path="/user/:username" element={<UserInfo />} />
 

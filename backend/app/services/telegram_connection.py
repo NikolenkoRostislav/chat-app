@@ -59,7 +59,7 @@ class TelegramConnectionService:
     async def disconnect_user(user_id: int, db: AsyncSession):
         connection = await TelegramConnectionService.get_connection_by_user_id(user_id, db, True)
         await _update_field(connection, 'telegram_chat_id', "Disconnected", db)
-        return connection
+        return {"detail": "User disconnected successfully"}
 
     @staticmethod
     async def create_temp_code(user_id: int, db: AsyncSession):
@@ -70,4 +70,4 @@ class TelegramConnectionService:
             return await TelegramConnectionService.create_temp_code(user_id, db)
         await _update_field(connection, 'temp_code', code, db)
         await _update_field(connection, 'code_expiry_time', code_expiry_time, db)
-        return connection
+        return {"code": code}
